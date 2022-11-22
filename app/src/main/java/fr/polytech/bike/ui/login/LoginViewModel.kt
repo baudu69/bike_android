@@ -20,6 +20,10 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
+    init {
+        _loginForm.value = LoginFormState(null, null, true)
+    }
+
     fun login(username: String, password: String) {
         runBlocking {
             launch {

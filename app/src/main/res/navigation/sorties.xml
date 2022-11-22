@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sorties"
+    app:startDestination="@id/sortieAccueil">
+    <fragment
+        android:id="@+id/sortieAccueil"
+        android:name="fr.polytech.bike.sorties.SortieAccueil"
+        android:label="fragment_sortie_accueil"
+        tools:layout="@layout/fragment_sortie_accueil" >
+        <action
+            android:id="@+id/action_sortieAccueil_to_listeSorties"
+            app:destination="@id/listeSorties" />
+    </fragment>
+    <fragment
+        android:id="@+id/listeSorties"
+        android:name="fr.polytech.bike.sorties.ListeSorties"
+        android:label="fragment_liste_sorties"
+        tools:layout="@layout/fragment_liste_sorties" />
+</navigation>

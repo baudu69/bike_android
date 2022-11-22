@@ -9,17 +9,26 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import fr.polytech.bike.ApiClient
 import fr.polytech.bike.R
+import fr.polytech.bike.databinding.ActivityAccueilBinding
+import fr.polytech.bike.sorties.SortieAccueil
+import fr.polytech.bike.sorties.SortieActivity
 import fr.polytech.bike.ui.login.LoginActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class Accueil : AppCompatActivity() {
     var connecte: Boolean = false
+    private lateinit var binding: ActivityAccueilBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_accueil)
+        binding = ActivityAccueilBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         openLogin()
+        binding.btnSorties.setOnClickListener {
+            Log.i("Accueil", "Bouton sorties cliqué")
+            startActivity(Intent(this, SortieActivity::class.java))
+        }
     }
 
     private fun openLogin() {
