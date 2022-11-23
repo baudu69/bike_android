@@ -13,7 +13,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 object ApiClient {
-    private const val BASE_URL = "http://10.42.161.46:8081/api/"
+    private const val BASE_URL = "https://article.ptitbiomed.fr/api/"
 
     private val gson: Gson by lazy {
         GsonBuilder()
