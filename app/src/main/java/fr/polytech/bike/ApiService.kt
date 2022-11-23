@@ -12,8 +12,5 @@ interface ApiService {
 
     @POST("auth/signIn")
     suspend fun login(@Body request: JwtRequest): Response<JwtResponse>
-
-    @GET("sortie")
-    suspend fun getSorties(): Response<List<Sortie>>
 }
 

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import fr.polytech.bike.adapter.LocalDateAdapter
 import fr.polytech.bike.adapter.LocalTimeAdapter
+import fr.polytech.bike.repository.SortieRepository
 import fr.polytech.bike.ui.login.JwtInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -12,7 +13,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 object ApiClient {
-    private const val BASE_URL = "http://192.168.1.18:8081/api/"
+    private const val BASE_URL = "http://10.42.161.46:8081/api/"
 
     private val gson: Gson by lazy {
         GsonBuilder()
@@ -37,5 +38,9 @@ object ApiClient {
 
     val apiService: ApiService by lazy {
         retrofit.create(ApiService::class.java)
+    }
+
+    val sortieRepository: SortieRepository by lazy {
+        retrofit.create(SortieRepository::class.java)
     }
 }
