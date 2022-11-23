@@ -14,7 +14,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import fr.polytech.bike.R
+import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.databinding.FragmentShowMapBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -25,17 +28,16 @@ class ShowMapFragment : Fragment() {
     private lateinit var viewModel: ShowMapViewModel
     private lateinit var viewModelFactory: ShowMapViewModelFactory
 
-    private lateinit var mapFragment: SupportMapFragment
-
     private val callback = OnMapReadyCallback { googleMap ->
-        runBlocking {
-            launch {
-                val sydney = LatLng(-34.0, 151.0)
-                googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        viewModel.etapes.observe(viewLifecycleOwner) { etapes ->
+            val polylineOptions = PolylineOptions()
+            etapes.forEach { etape ->
+                googleMap.addMarker(MarkerOptions().position(LatLng(etape.latitude, etape.longitude)).title(etape.nomEtape))
+                polylineOptions.add(LatLng(etape.latitude, etape.longitude))
             }
+            googleMap.addPolyline(polylineOptions)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(etapes[0].latitude, etapes[0].longitude), 10f))
         }
-
     }
 
     override fun onCreateView(
@@ -43,7 +45,8 @@ class ShowMapFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        this.viewModelFactory = ShowMapViewModelFactory()
+        val args = ShowMapFragmentArgs.fromBundle(requireArguments())
+        this.viewModelFactory = ShowMapViewModelFactory(args.sortie)
         this.viewModel = ViewModelProvider(this, viewModelFactory)[ShowMapViewModel::class.java]
         this.binding = FragmentShowMapBinding.inflate(inflater, container, false)
 

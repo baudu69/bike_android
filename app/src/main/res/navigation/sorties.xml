@@ -17,5 +17,26 @@
         android:id="@+id/listeSorties"
         android:name="fr.polytech.bike.sorties.ListeSorties"
         android:label="fragment_liste_sorties"
-        tools:layout="@layout/fragment_liste_sorties" />
+        tools:layout="@layout/fragment_liste_sorties" >
+        <action
+            android:id="@+id/action_listeSorties_to_showMapFragment"
+            app:destination="@id/showMapFragment" />
+        <action
+            android:id="@+id/action_listeSorties_to_addSortieFragment"
+            app:destination="@id/addSortieFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/showMapFragment"
+        android:name="fr.polytech.bike.map.ShowMapFragment"
+        android:label="fragment_show_map"
+        tools:layout="@layout/fragment_show_map" >
+        <argument
+            android:name="sortie"
+            app:argType="fr.polytech.bike.data.model.Sortie" />
+    </fragment>
+    <fragment
+        android:id="@+id/addSortieFragment"
+        android:name="fr.polytech.bike.sorties.addsortie.AddSortieFragment"
+        android:label="fragment_add_sortie"
+        tools:layout="@layout/fragment_add_sortie" />
 </navigation>
