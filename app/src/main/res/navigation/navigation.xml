@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/nav_liste_sortie">
+
+    <fragment
+        android:id="@+id/nav_liste_sortie"
+        android:name="fr.polytech.bike.sorties.SortieListeFragment"
+        android:label="fragment_liste_sorties"
+        tools:layout="@layout/fragment_sortie_liste" >
+        <action
+            android:id="@+id/action_nav_liste_sortie_to_profilFragment"
+            app:destination="@id/nav_profil"
+            app:enterAnim="@android:anim/slide_in_left" />
+        <action
+            android:id="@+id/action_nav_liste_sortie_to_nav_signup"
+            app:destination="@id/nav_signup"
+            app:enterAnim="@android:anim/slide_in_left" />
+        <action
+            android:id="@+id/action_nav_liste_sortie_to_showMapFragment2"
+            app:destination="@id/nav_show_map" />
+        <action
+            android:id="@+id/action_nav_liste_sortie_to_addSortieFragment2"
+            app:destination="@id/addSortieFragment2" />
+        <action
+            android:id="@+id/action_nav_liste_sortie_self"
+            app:destination="@id/nav_liste_sortie" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_profil"
+        android:name="fr.polytech.bike.profil.ProfilFragment"
+        android:label="fragment_profil"
+        tools:layout="@layout/fragment_profil" >
+        <action
+            android:id="@+id/action_nav_profil_to_nav_signup"
+            app:destination="@id/nav_signup" />
+        <action
+            android:id="@+id/action_nav_profil_to_nav_liste_sortie"
+            app:destination="@id/nav_liste_sortie" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_signup"
+        android:name="fr.polytech.bike.ui.signup.SignUpFragment"
+        android:label="SignUpFragment" >
+        <action
+            android:id="@+id/action_nav_signup_to_nav_profil"
+            app:destination="@id/nav_profil" />
+        <action
+            android:id="@+id/action_nav_signup_to_nav_liste_sortie"
+            app:destination="@id/nav_liste_sortie" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_show_map"
+        android:name="fr.polytech.bike.map.ShowMapFragment"
+        android:label="fragment_sortie_map"
+        tools:layout="@layout/fragment_sortie_map" >
+        <action
+            android:id="@+id/action_showMapFragment2_to_nav_signup"
+            app:destination="@id/nav_signup" />
+        <action
+            android:id="@+id/action_showMapFragment2_to_nav_profil"
+            app:destination="@id/nav_profil" />
+        <argument
+            android:name="sortie"
+            app:argType="fr.polytech.bike.data.model.Sortie" />
+    </fragment>
+    <fragment
+        android:id="@+id/addSortieFragment2"
+        android:name="fr.polytech.bike.sorties.addsortie.AddSortieFragment"
+        android:label="fragment_sortie_add"
+        tools:layout="@layout/fragment_sortie_add" >
+        <action
+            android:id="@+id/action_addSortieFragment2_to_nav_profil"
+            app:destination="@id/nav_profil" />
+        <action
+            android:id="@+id/action_addSortieFragment2_to_nav_signup"
+            app:destination="@id/nav_signup" />
+    </fragment>
+</navigation>

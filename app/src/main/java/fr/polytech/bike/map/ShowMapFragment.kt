@@ -1,30 +1,23 @@
 package fr.polytech.bike.map
 
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import fr.polytech.bike.R
-import fr.polytech.bike.data.model.Sortie
-import fr.polytech.bike.databinding.FragmentShowMapBinding
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import fr.polytech.bike.databinding.FragmentSortieMapBinding
 
 class ShowMapFragment : Fragment() {
 
-    private lateinit var binding: FragmentShowMapBinding
+    private lateinit var binding: FragmentSortieMapBinding
     private lateinit var viewModel: ShowMapViewModel
     private lateinit var viewModelFactory: ShowMapViewModelFactory
 
@@ -48,7 +41,7 @@ class ShowMapFragment : Fragment() {
         val args = ShowMapFragmentArgs.fromBundle(requireArguments())
         this.viewModelFactory = ShowMapViewModelFactory(args.sortie)
         this.viewModel = ViewModelProvider(this, viewModelFactory)[ShowMapViewModel::class.java]
-        this.binding = FragmentShowMapBinding.inflate(inflater, container, false)
+        this.binding = FragmentSortieMapBinding.inflate(inflater, container, false)
 
         return binding.root
     }

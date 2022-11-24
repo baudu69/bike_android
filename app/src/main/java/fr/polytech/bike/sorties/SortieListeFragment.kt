@@ -1,37 +1,30 @@
 package fr.polytech.bike.sorties
 
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import fr.polytech.bike.R
-import fr.polytech.bike.data.bluetooth.ServiceBluetooth
 import fr.polytech.bike.data.model.Sortie
-import fr.polytech.bike.databinding.FragmentListeSortiesBinding
-import me.aflak.bluetooth.Bluetooth
-import me.aflak.bluetooth.interfaces.DeviceCallback
+import fr.polytech.bike.databinding.FragmentSortieListeBinding
 
-class ListeSorties : Fragment() {
+class SortieListeFragment : Fragment() {
 
     private lateinit var viewModel: ListeSortiesViewModel
-    private lateinit var binding: FragmentListeSortiesBinding
+    private lateinit var binding: FragmentSortieListeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         viewModel = ViewModelProvider(this)[ListeSortiesViewModel::class.java]
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_liste_sorties, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sortie_liste, container, false)
         binding.viewModel = viewModel
         loadListe()
         eventListClick()
@@ -55,7 +48,7 @@ class ListeSorties : Fragment() {
                 return@setOnItemClickListener
             }
             this.findNavController().navigate(
-                ListeSortiesDirections.actionListeSortiesToShowMapFragment(sortie),
+                SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(sortie),
             )
 
         }
@@ -64,7 +57,7 @@ class ListeSorties : Fragment() {
     private fun eventBtnAddClick() {
         binding.btnSortieAdd.setOnClickListener {
             this.findNavController().navigate(
-                ListeSortiesDirections.actionListeSortiesToAddSortieFragment()
+                SortieListeFragmentDirections.actionNavListeSortieToAddSortieFragment2()
             )
         }
     }
