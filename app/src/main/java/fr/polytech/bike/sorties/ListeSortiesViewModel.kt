@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import fr.polytech.bike.ApiClient
+import fr.polytech.bike.repository.ApiClient
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.repository.SortieRepository
 import kotlinx.coroutines.launch

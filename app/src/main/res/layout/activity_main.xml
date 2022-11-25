@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sorties.MainActivity">
+    tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
@@ -33,21 +33,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Sorties" />
+            android:text="Sorties"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/btn_nav_profil"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Profil" />
+            android:text="Profil"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/btn_nav_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Logout" />
+            android:text="Logout"
+            style="?android:attr/buttonBarButtonStyle" />
 
     </LinearLayout>
 

@@ -19,9 +19,6 @@ class SignUpViewModel : ViewModel() {
     private val _confirmPassword = MutableLiveData<String>()
     val confirmPassword: MutableLiveData<String> = _confirmPassword
 
-    private val _birthday = MutableLiveData<String>()
-    val birthday: MutableLiveData<String> = _birthday
-
     private val _dataValid = MutableLiveData<Boolean>()
     val dataValid: MutableLiveData<Boolean> = _dataValid
 
@@ -45,12 +42,8 @@ class SignUpViewModel : ViewModel() {
         return email.value?.isNotBlank() ?: false
     }
 
-    private fun isBirthdayValid(): Boolean {
-        return birthday.value?.isNotBlank() ?: false
-    }
-
     fun validData() {
-        _dataValid.value = isPasswordIdentical() && isLastNameValid() && isFirstNameValid() && isEmailValid() && isBirthdayValid()
+        _dataValid.value = isPasswordIdentical() && isLastNameValid() && isFirstNameValid() && isEmailValid()
     }
 
 
