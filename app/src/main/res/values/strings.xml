@@ -13,5 +13,8 @@
     <string name="btn_liste_sortie">Liste des sorties</string>
     <string name="titre_add_sortie">Ajouter une sortie</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="gatt_service_name">BLE Gatt Service</string>
+    <string name="gatt_service_description">A background BLE GATT service</string>
+    <string name="gatt_service_running_notification">\"Managing BLE GATT service\"</string>
+    <string name="pair_the_ble_gatt_server_via_settings">Pair the ble-gatt-server via settings</string>
 </resources>

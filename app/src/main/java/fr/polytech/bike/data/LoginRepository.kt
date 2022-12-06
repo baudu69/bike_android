@@ -15,10 +15,6 @@ class LoginRepository(val dataSource: LoginDataSource) {
         var user: JwtResponse? = null
     }
 
-    // in-memory cache of the loggedInUser object
-//    var user: JwtResponse2? = null
-//        private set
-
     val isLoggedIn: Boolean
         get() = user != null
 
@@ -30,7 +26,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
 
     suspend fun login(username: String, password: String): Result<JwtResponse> {
         // handle login
-        val result = dataSource.login(username, password)
+        val result: Result<JwtResponse> = dataSource.login(username, password)
         if (result is Result.Success) {
             setLoggedInUser(result.data)
         }

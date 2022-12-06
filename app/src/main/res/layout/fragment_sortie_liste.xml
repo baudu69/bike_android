@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".sorties.SortieListeFragment">
+    tools:context=".ui.sorties.SortieListeFragment">
     <data>
         <variable
             name="viewModel"
-            type="fr.polytech.bike.sorties.ListeSortiesViewModel" />
+            type="fr.polytech.bike.ui.sorties.ListeSortiesViewModel" />
     </data>
 
     <RelativeLayout

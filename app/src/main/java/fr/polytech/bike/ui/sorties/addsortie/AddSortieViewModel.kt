@@ -1,4 +1,4 @@
-package fr.polytech.bike.sorties.addsortie
+package fr.polytech.bike.ui.sorties.addsortie
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

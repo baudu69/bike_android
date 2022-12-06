@@ -1,4 +1,4 @@
-package fr.polytech.bike.map
+package fr.polytech.bike.ui.map
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

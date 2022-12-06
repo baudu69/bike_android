@@ -1,4 +1,4 @@
-package fr.polytech.bike.sorties
+package fr.polytech.bike.ui.sorties
 
 import android.os.Bundle
 import android.util.Log
@@ -48,7 +48,9 @@ class SortieListeFragment : Fragment() {
                 return@setOnItemClickListener
             }
             this.findNavController().navigate(
-                SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(sortie),
+                SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(
+                    sortie
+                ),
             )
 
         }

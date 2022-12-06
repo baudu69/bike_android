@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.internal.ContextUtils.getActivity
 import fr.polytech.bike.R
 import fr.polytech.bike.databinding.ActivityLoginBinding
+import fr.polytech.bike.ui.signup.SignUpActivity
 import org.json.JSONException
 
 
@@ -101,6 +102,10 @@ class LoginActivity : AppCompatActivity() {
                 loading.visibility = View.VISIBLE
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
+        }
+        binding.btnLoginInscription?.setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
         }
     }
 

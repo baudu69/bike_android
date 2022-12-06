@@ -1,4 +1,4 @@
-package fr.polytech.bike.map
+package fr.polytech.bike.ui.map
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -1,4 +1,4 @@
-package fr.polytech.bike.sorties
+package fr.polytech.bike.ui.sorties
 
 import android.util.Log
 import androidx.lifecycle.LiveData

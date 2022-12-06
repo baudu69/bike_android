@@ -12,8 +12,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 object ApiClient {
-    private const val BASE_URL = "http://198.168.1.18:8081/api/"
-//    private const val BASE_URL = "https://article.ptitbiomed.fr/api/"
+//    private const val BASE_URL = "http://198.168.1.18:8081/api/"
+    private const val BASE_URL = "https://article.ptitbiomed.fr/api/"
 
     private val gson: Gson by lazy {
         GsonBuilder()
@@ -42,5 +42,9 @@ object ApiClient {
 
     val sortieRepository: SortieRepository by lazy {
         retrofit.create(SortieRepository::class.java)
+    }
+
+    val userRepository: UserRepository by lazy {
+        retrofit.create(UserRepository::class.java)
     }
 }
