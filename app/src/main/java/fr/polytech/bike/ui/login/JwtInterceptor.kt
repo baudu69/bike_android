@@ -7,9 +7,9 @@ import okhttp3.Response
 class JwtInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        if (LoginRepository.user != null) {
+        if (LoginRepository.jwt != null) {
             val newRequest = request.newBuilder()
-                .addHeader("Authorization", "Bearer ${LoginRepository.user!!.jwt}")
+                .addHeader("Authorization", "Bearer ${LoginRepository.jwt!!.jwt}")
                 .build()
             return chain.proceed(newRequest)
         }

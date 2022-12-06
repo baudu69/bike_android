@@ -27,7 +27,7 @@ class ProfilFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModelFactory = ProfilViewModelFactory(LoginRepository.user?.user ?: throw Exception("User not found"))
+        viewModelFactory = ProfilViewModelFactory(LoginRepository.user ?: throw Exception("User not found"))
         viewModel = ViewModelProvider(this, viewModelFactory)[ProfilViewModel::class.java]
         binding = FragmentProfilBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
@@ -54,11 +54,11 @@ class ProfilFragment : Fragment() {
     }
 
     private fun majUserStocked() {
-        LoginRepository.user?.user?.prenomUtil = viewModel.firstname.value ?: ""
-        LoginRepository.user?.user?.nomUtil = viewModel.lastname.value ?: ""
-        LoginRepository.user?.user?.poids = viewModel.poids.value?.toDouble() ?: 0.0
-        LoginRepository.user?.user?.taille = viewModel.taille.value?.toDouble() ?: 0.0
-        LoginRepository.user?.user?.dateNaissance = viewModel.birthdate.value?.let { LocalDate.parse(it) } ?: LocalDate.now()
+        LoginRepository.user?.prenomUtil = viewModel.firstname.value ?: ""
+        LoginRepository.user?.nomUtil = viewModel.lastname.value ?: ""
+        LoginRepository.user?.poids = viewModel.poids.value?.toDouble() ?: 0.0
+        LoginRepository.user?.taille = viewModel.taille.value?.toDouble() ?: 0.0
+        LoginRepository.user?.dateNaissance = viewModel.birthdate.value?.let { LocalDate.parse(it) } ?: LocalDate.now()
     }
 
 }

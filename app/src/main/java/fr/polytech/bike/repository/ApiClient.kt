@@ -15,7 +15,7 @@ object ApiClient {
 //    private const val BASE_URL = "http://198.168.1.18:8081/api/"
     private const val BASE_URL = "https://article.ptitbiomed.fr/api/"
 
-    private val gson: Gson by lazy {
+    val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
             .registerTypeAdapter(LocalTime::class.java, LocalTimeAdapter())
