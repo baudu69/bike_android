@@ -63,8 +63,8 @@
             android:id="@+id/action_showMapFragment2_to_nav_profil"
             app:destination="@id/nav_profil" />
         <argument
-            android:name="sortie"
-            app:argType="fr.polytech.bike.data.model.Sortie" />
+            android:name="Etapes"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/addSortieFragment2"
@@ -77,5 +77,11 @@
         <action
             android:id="@+id/action_addSortieFragment2_to_nav_signup"
             app:destination="@id/nav_signup" />
+        <action
+            android:id="@+id/action_addSortieFragment2_to_nav_liste_sortie"
+            app:destination="@id/nav_liste_sortie" />
+        <action
+            android:id="@+id/action_addSortieFragment2_to_nav_show_map"
+            app:destination="@id/nav_show_map" />
     </fragment>
 </navigation>

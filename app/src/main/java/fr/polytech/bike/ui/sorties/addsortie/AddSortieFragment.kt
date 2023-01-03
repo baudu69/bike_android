@@ -1,35 +1,77 @@
 package fr.polytech.bike.ui.sorties.addsortie
 
-import android.Manifest.permission.*
-import android.content.ComponentName
+import android.app.Activity.RESULT_OK
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import fr.polytech.bike.BuildConfig
+import androidx.navigation.fragment.findNavController
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import fr.polytech.bike.data.bluetooth.ServiceBluetooth
+import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.databinding.FragmentSortieAddBinding
+import fr.polytech.bike.repository.ApiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 
 class AddSortieFragment : Fragment() {
-
-    private val defaultScope = CoroutineScope(Dispatchers.Default)
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private var serviceBluetoothConn: ServiceBluetoothConn? = null
-    private var gattServiceData: ServiceBluetooth.DataPlane? = null
-    private val myCharacteristicValueChangeNotifications = Channel<String>()
 
     private lateinit var viewModelFactory: AddSortieViewModelFactory
     private lateinit var viewModel: AddSortieViewModel
     private lateinit var binding: FragmentSortieAddBinding
+
+    private val launcherBluetooth =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            for (permission in it) {
+                Log.i("PERMISSION", permission.key + " : " + permission.value)
+                if (!permission.value) {
+                    Toast.makeText(
+                        requireContext(),
+                        "La permission est nécessaire pour ajouter une sortie",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    AddSortieFragmentDirections.actionAddSortieFragment2ToNavListeSortie()
+                    return@registerForActivityResult
+                }
+                requireActivity().startService(
+                    Intent(
+                        requireContext(),
+                        ServiceBluetooth::class.java
+                    )
+                )
+            }
+        }
+
+    private var requestBluetooth =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                Log.d("Bluetooth", "Bluetooth activé")
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Le bluetooth est nécessaire pour ajouter une sortie",
+                    Toast.LENGTH_SHORT
+                ).show()
+                AddSortieFragmentDirections.actionAddSortieFragment2ToNavListeSortie()
+            }
+        }
 
 
     override fun onCreateView(
@@ -39,65 +81,97 @@ class AddSortieFragment : Fragment() {
         this.viewModelFactory = AddSortieViewModelFactory()
         this.viewModel = ViewModelProvider(this, viewModelFactory)[AddSortieViewModel::class.java]
         this.binding = FragmentSortieAddBinding.inflate(inflater, container, false)
+        this.binding.lifecycleOwner = this
         this.binding.viewModel = this.viewModel
+        this.bluetoothPermissions()
+        this.binding.mvSortieAdd.onCreate(savedInstanceState)
+        this.progressBarControl()
+        openMap()
+        checkForEnd()
         return this.binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        defaultScope.launch {
-            for (newValue in myCharacteristicValueChangeNotifications) {
-                mainHandler.run {
-                    Log.d("ServiceBluetooth", "Received notification: $newValue")
-                }
+    private fun checkForEnd() {
+        this.viewModel.finish.observe(viewLifecycleOwner) {
+            if (it) {
+                this.findNavController()
+                    .navigate(AddSortieFragmentDirections.actionAddSortieFragment2ToNavListeSortie())
             }
         }
-        activity?.startForegroundService(Intent(activity, ServiceBluetooth::class.java))
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun bluetoothPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            launcherBluetooth.launch(
+                arrayOf(
+                    "android.permission.BLUETOOTH_CONNECT",
+                    "android.permission.BLUETOOTH_SCAN"
+                )
+            )
+        } else {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            requestBluetooth.launch(enableBtIntent)
+        }
+    }
 
-        val latestServiceBluetoothConn = ServiceBluetoothConn()
-        if (activity?.bindService(Intent(ServiceBluetooth.DATA_PLANE_ACTION, null, activity, ServiceBluetooth::class.java), latestServiceBluetoothConn, 0) == true) {
-            serviceBluetoothConn = latestServiceBluetoothConn
+    private fun progressBarControl() {
+        //Indeterminate tant que le bluetooth n'est pas connecté
+        var connected = false
+        this.binding.progressBar.isIndeterminate = true
+        ServiceBluetooth.connected.observe(viewLifecycleOwner) {
+            if (it and !connected) {
+                connected = true
+                this.binding.progressBar.isIndeterminate = false
+                this.binding.progressBar.progress = 0
+            }
+        }
+
+        this.viewModel.nbEtapes.observe(viewLifecycleOwner) {
+            this.binding.progressBar.max = it
+        }
+        this.viewModel.etapeActuelle.observe(viewLifecycleOwner) {
+            this.binding.progressBar.progress = it
+            if (it == this.binding.progressBar.max && it != 0) {
+                Log.i("AddSortieFragment", "Chargement terminé")
+                this.binding.btnValidNewSortie.isClickable = true
+                this.binding.progressBar.visibility = View.GONE
+            }
         }
     }
 
     override fun onStop() {
         super.onStop()
-
-        if (serviceBluetoothConn != null) {
-            activity?.unbindService(serviceBluetoothConn!!)
-            serviceBluetoothConn = null
-        }
+        requireActivity().stopService(Intent(activity, ServiceBluetooth::class.java))
+        this.viewModel.reset()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        // We only want the service around for as long as our app is being run on the device
-        activity?.stopService(Intent(activity, ServiceBluetooth::class.java))
-    }
-
-    private inner class ServiceBluetoothConn : ServiceConnection {
-        override fun onServiceDisconnected(name: ComponentName?) {
-            if (BuildConfig.DEBUG && ServiceBluetooth::class.java.name != name?.className) {
-                error("Disconnected from unknown service")
-            } else {
-                gattServiceData = null
+    private val callback = OnMapReadyCallback { googleMap ->
+        var att = 0;
+        var etapePrecedente: Etape? = null
+        viewModel.etape.observe(viewLifecycleOwner) { etape ->
+            val polylineOptions = PolylineOptions()
+            googleMap.addMarker(
+                MarkerOptions().position(LatLng(etape.latitude, etape.longitude))
+                    .title(etape.description())
+            )
+            polylineOptions.add(LatLng(etape.latitude, etape.longitude))
+            if (etapePrecedente != null) {
+                polylineOptions.add(LatLng(etapePrecedente!!.latitude, etapePrecedente!!.longitude))
             }
-        }
-
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if (BuildConfig.DEBUG && ServiceBluetooth::class.java.name != name?.className)
-                error("Connected to unknown service")
-            else {
-                gattServiceData = service as ServiceBluetooth.DataPlane
-
-                gattServiceData?.setMyCharacteristicChangedChannel(myCharacteristicValueChangeNotifications)
+            etapePrecedente = etape
+            googleMap.addPolyline(polylineOptions)
+            if (att == 0) {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(etape.latitude, etape.longitude), 10f))
             }
+            att++
         }
     }
+
+    private fun openMap() {
+        MapsInitializer.initialize(requireActivity())
+        this.binding.mvSortieAdd.getMapAsync(callback)
+        this.binding.mvSortieAdd.onResume()
+    }
+
 
 }

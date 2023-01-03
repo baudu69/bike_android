@@ -5,13 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.data.model.Sortie
 
-class ShowMapViewModelFactory(var sortie: Sortie): ViewModelProvider.Factory {
+class ShowMapViewModelFactory(var etapes: List<Etape>): ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ShowMapViewModel::class.java)) {
-            sortie.etapes = sortie.etapes.sortedBy { it.numEtape }
-            return ShowMapViewModel(sortie) as T
+            etapes = etapes.sortedBy { it.numEtape }
+            return ShowMapViewModel(etapes) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

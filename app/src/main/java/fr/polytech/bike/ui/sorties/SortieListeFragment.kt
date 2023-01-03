@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import fr.polytech.bike.R
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.databinding.FragmentSortieListeBinding
+import fr.polytech.bike.repository.ApiClient
 
 class SortieListeFragment : Fragment() {
 
@@ -49,7 +50,7 @@ class SortieListeFragment : Fragment() {
             }
             this.findNavController().navigate(
                 SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(
-                    sortie
+                    ApiClient.gson.toJson(sortie.etapes)
                 ),
             )
 

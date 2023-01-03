@@ -12,8 +12,12 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.gson.reflect.TypeToken
 import fr.polytech.bike.R
+import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.databinding.FragmentSortieMapBinding
+import fr.polytech.bike.repository.ApiClient
+import java.lang.reflect.Type
 
 class ShowMapFragment : Fragment() {
 
@@ -25,7 +29,7 @@ class ShowMapFragment : Fragment() {
         viewModel.etapes.observe(viewLifecycleOwner) { etapes ->
             val polylineOptions = PolylineOptions()
             etapes.forEach { etape ->
-                googleMap.addMarker(MarkerOptions().position(LatLng(etape.latitude, etape.longitude)).title(etape.nomEtape))
+                googleMap.addMarker(MarkerOptions().position(LatLng(etape.latitude, etape.longitude)).title(etape.description()))
                 polylineOptions.add(LatLng(etape.latitude, etape.longitude))
             }
             googleMap.addPolyline(polylineOptions)
@@ -39,7 +43,8 @@ class ShowMapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val args = ShowMapFragmentArgs.fromBundle(requireArguments())
-        this.viewModelFactory = ShowMapViewModelFactory(args.sortie)
+        val listOfMyClassObject: Type = object : TypeToken<ArrayList<Etape?>?>() {}.type
+        this.viewModelFactory = ShowMapViewModelFactory(ApiClient.gson.fromJson(args.etapes, listOfMyClassObject))
         this.viewModel = ViewModelProvider(this, viewModelFactory)[ShowMapViewModel::class.java]
         this.binding = FragmentSortieMapBinding.inflate(inflater, container, false)
 

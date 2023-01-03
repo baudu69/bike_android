@@ -6,12 +6,13 @@ import androidx.lifecycle.ViewModel
 import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.data.model.Sortie
 
-class ShowMapViewModel(private val sortie: Sortie) : ViewModel() {
+class ShowMapViewModel(private val etapesToAdd: List<Etape>) : ViewModel() {
 
     private val _etapes = MutableLiveData<List<Etape>>()
-    val etapes: LiveData<List<Etape>> = _etapes
+    val etapes: LiveData<List<Etape>>
+        get() = _etapes
 
     init {
-        _etapes.value = sortie.etapes
+        _etapes.value = etapesToAdd
     }
 }

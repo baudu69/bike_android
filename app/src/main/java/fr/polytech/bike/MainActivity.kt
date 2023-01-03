@@ -1,31 +1,32 @@
 package fr.polytech.bike
 
-import android.annotation.SuppressLint
+import android.Manifest.permission.*
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import fr.polytech.bike.data.LoginRepository
 import fr.polytech.bike.data.bluetooth.ServiceBluetooth
 import fr.polytech.bike.data.local.LocalDatabase
-import fr.polytech.bike.data.local.JWTDao
 import fr.polytech.bike.databinding.ActivityMainBinding
+import fr.polytech.bike.repository.ApiClient
 import fr.polytech.bike.ui.login.LoginActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
     private lateinit var localDatabase: LocalDatabase
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private val userRepository = ApiClient.userRepository
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
 
     private val launcherLogin =
@@ -44,13 +45,12 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         this.navController = navHostFragment.navController
         this.localDatabase = LocalDatabase.getInstance(this)
-        startService(Intent(this, ServiceBluetooth::class.java))
         openLogin()
         btnClick()
         setContentView(binding.root)
     }
 
-    fun btnClick() {
+    private fun btnClick() {
         this.binding.btnNavSorties.setOnClickListener {
             this.navController.navigate(R.id.nav_liste_sortie)
         }
@@ -83,9 +83,14 @@ class MainActivity : AppCompatActivity() {
             if (localDatabase.JWTDao.getLast() == null) {
                 launcherLogin.launch(Intent(context, LoginActivity::class.java))
             } else {
-                LoginRepository.jwt = localDatabase.JWTDao.getLast()
-                LoginRepository.user = localDatabase.userDao.getLast()
-                continu.postValue(true)
+                val response = userRepository.get()
+                if (response.isSuccessful) {
+                    LoginRepository.jwt = localDatabase.JWTDao.getLast()
+                    LoginRepository.user = response.body()
+                    continu.postValue(true)
+                } else {
+                    launcherLogin.launch(Intent(context, LoginActivity::class.java))
+                }
             }
 
         }
