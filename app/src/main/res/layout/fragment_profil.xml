@@ -4,7 +4,7 @@
     tools:context=".ui.profil.ProfilFragment">
 
     <data>
-
+        <import type="fr.polytech.bike.data.Converter"/>
         <variable
             name="viewModel"
             type="fr.polytech.bike.ui.profil.ProfilViewModel" />
@@ -39,7 +39,7 @@
                 android:layout_marginBottom="20dip"
                 android:ems="10"
                 android:hint="Nom"
-                android:text="@={viewModel.lastname}"
+                android:text="@={viewModel.userModel.nomUtil}"
                 android:inputType="textPersonName"
                 android:minHeight="48dp" />
 
@@ -50,7 +50,7 @@
                 android:layout_marginBottom="20dip"
                 android:ems="10"
                 android:hint="Prenom"
-                android:text="@={viewModel.firstname}"
+                android:text="@={viewModel.userModel.prenomUtil}"
                 android:inputType="textPersonName"
                 android:minHeight="48dp" />
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
                 android:ems="10"
-                android:text="@={viewModel.taille}"
+                android:text="@={Converter.doubleToString(viewModel.userModel.taille)}"
                 android:hint="Taille (cm)"
                 android:inputType="numberDecimal"
                 android:minHeight="48dp" />
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
                 android:ems="10"
-                android:text="@={viewModel.poids}"
+                android:text="@={Converter.doubleToString(viewModel.userModel.poids)}"
                 android:hint="Poids (kg)"
                 android:inputType="numberDecimal"
                 android:minHeight="48dp" />
@@ -102,6 +102,7 @@
                 android:id="@+id/btn_profil_valid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onValidate()}"
                 android:text="Mise a jour" />
         </LinearLayout>
     </LinearLayout>

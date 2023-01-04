@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.signup.SignUpActivity">
     <data>
+        <import type="fr.polytech.bike.data.Converter"/>
         <variable
             name="viewModel"
             type="fr.polytech.bike.ui.signup.SignUpViewModel" />
@@ -36,7 +37,7 @@
             android:hint="Nom"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:text="@={viewModel.lastname}" />
+            android:text="@={viewModel.signUpRequest.lastname}" />
 
         <EditText
             android:id="@+id/et_signup_firstname"
@@ -47,7 +48,7 @@
             android:hint="Prenom"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:text="@={viewModel.firstname}" />
+            android:text="@={viewModel.signUpRequest.firstname}" />
 
         <EditText
             android:id="@+id/et_signup_taille"
@@ -58,7 +59,7 @@
             android:hint="Taille (cm)"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
-            android:text="@={viewModel.taille}" />
+            android:text="@={Converter.doubleToString(viewModel.signUpRequest.taille)}" />
 
         <EditText
             android:id="@+id/et_signup_poids"
@@ -69,7 +70,7 @@
             android:hint="Poids (kg)"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
-            android:text="@={viewModel.poids}" />
+            android:text="@={Converter.doubleToString(viewModel.signUpRequest.poids)}" />
 
         <EditText
             android:id="@+id/et_signup_birthday"
@@ -80,7 +81,7 @@
             android:hint="Date de naissance"
             android:inputType="date"
             android:minHeight="48dp"
-            android:text="@={viewModel.birthdate}" />
+            android:text="@={viewModel.birthDate}" />
 
         <EditText
             android:id="@+id/tv_signup_username"
@@ -91,7 +92,7 @@
             android:hint="Nom d'utilisateur"
             android:inputType="text"
             android:minHeight="48dp"
-            android:text="@={viewModel.username}" />
+            android:text="@={viewModel.signUpRequest.username}" />
 
         <EditText
             android:id="@+id/et_signup_password"
@@ -102,7 +103,7 @@
             android:hint="Mot de passe"
             android:inputType="textPassword"
             android:minHeight="48dp"
-            android:text="@={viewModel.password}" />
+            android:text="@={viewModel.signUpRequest.password}" />
 
         <EditText
             android:id="@+id/et_signup_password_confirm"
@@ -119,6 +120,7 @@
             android:id="@+id/btn_signup_valid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Valider" />
+            android:text="Valider"
+            android:onClick="@{() -> viewModel.onValid()}"/>
     </LinearLayout>
 </layout>

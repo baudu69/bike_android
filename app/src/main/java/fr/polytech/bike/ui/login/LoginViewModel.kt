@@ -35,12 +35,12 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val d
 
                 if (result is Result.Success) {
                     val jwt: String = result.data.jwt
-                    val bodyBase64: String = jwt.split(".")[1]
-                    val body: String = String(android.util.Base64.decode(bodyBase64, android.util.Base64.DEFAULT))
-                    val response: jwtReponseBody =ApiClient.gson.fromJson(body, jwtReponseBody::class.java)
-                    val utilisateur: Utilisateur = response.user
+                    val response = ApiClient.userRepository.get()
+                    val utilisateur: Utilisateur = response.body()!!
                     _loginResult.value = LoginResult(success = LoggedInUserView(displayName = utilisateur.prenomUtil + " " + utilisateur.nomUtil))
                     CoroutineScope(Dispatchers.IO).launch {
+                        database.userDao.delete()
+                        database.JWTDao.delete()
                         database.JWTDao.insert(result.data)
                         database.userDao.insert(utilisateur)
                     }

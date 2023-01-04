@@ -1,105 +1,103 @@
 package fr.polytech.bike.ui.signup
 
+import android.util.Log
+import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import fr.polytech.bike.data.model.SignUpRequest
+import fr.polytech.bike.data.model.SignUpRequestSerializable
+import fr.polytech.bike.repository.ApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class SignUpViewModel : ViewModel() {
-    private val _lastname = MutableLiveData<String>()
-    val lastname: MutableLiveData<String> = _lastname
 
-    private val _firstname = MutableLiveData<String>()
-    val firstname: MutableLiveData<String> = _firstname
+    private val _navigateToConnexion = MutableLiveData<Boolean>()
+    val navigateToConnexion: LiveData<Boolean>
+        get() = _navigateToConnexion
 
-    private val _username = MutableLiveData<String>()
-    val username: MutableLiveData<String> = _username
 
-    private val _password = MutableLiveData<String>()
-    val password: MutableLiveData<String> = _password
+    private var viewModelJob = Job()
+    private val uiScope = CoroutineScope(Dispatchers.IO + viewModelJob)
+    private val authRepository = ApiClient.authRepository
 
-    private val _confirmPassword = MutableLiveData<String>()
-    val confirmPassword: MutableLiveData<String> = _confirmPassword
+    private val _signUpRequest: MutableLiveData<SignUpRequest> = MutableLiveData()
+    val signUpRequest: LiveData<SignUpRequest>
+        get() = _signUpRequest
 
-    private val _birthdate = MutableLiveData<String>()
-    val birthdate: MutableLiveData<String> = _birthdate
-
-    private val _poids = MutableLiveData<String>()
-    val poids: MutableLiveData<String> = _poids
-
-    private val _taille = MutableLiveData<String>()
-    val taille: MutableLiveData<String> = _taille
-
-    private val _dataValid = MutableLiveData<Boolean>()
-    val dataValid: MutableLiveData<Boolean> = _dataValid
+    val confirmPassword: MutableLiveData<String> = MutableLiveData()
+    val birthDate: MutableLiveData<String> = MutableLiveData(LocalDate.now().toString())
 
     init {
-        _dataValid.value = false
+        _signUpRequest.value = SignUpRequest("", "", "", "", 0.0, 0.0, LocalDate.now())
     }
 
     private fun isPasswordIdentical(): Boolean {
-        return password.value == confirmPassword.value
+        return _signUpRequest.value?.password == confirmPassword.value
     }
 
     private fun isLastNameValid(): Boolean {
-        return lastname.value?.isNotBlank() ?: false
+        return _signUpRequest.value?.lastname?.isNotBlank() ?: false
     }
 
     private fun isFirstNameValid(): Boolean {
-        return firstname.value?.isNotBlank() ?: false
+        return _signUpRequest.value?.firstname?.isNotBlank() ?: false
     }
 
     private fun isEmailValid(): Boolean {
-        return username.value?.isNotBlank() ?: false
+        return _signUpRequest.value?.username?.isNotBlank() ?: false
     }
 
     private fun isPasswordValid(): Boolean {
-        return password.value?.isNotBlank() ?: false
+        return _signUpRequest.value?.password?.isNotBlank() ?: false
     }
 
     private fun isUsernameValid(): Boolean {
-        return username.value?.isNotBlank() ?: false
+        return _signUpRequest.value?.username?.isNotBlank() ?: false
     }
 
     private fun isTailleValid(): Boolean {
-        if (taille.value == null || taille.value?.isBlank() == true) {
-            return false
-        }
-        return try {
-            taille.value?.toDouble()
-            true
-        } catch (e: NumberFormatException) {
-            false
-        }
+        return _signUpRequest.value?.taille != null
     }
 
     private fun isPoidsValid(): Boolean {
-        if (poids.value == null || poids.value?.isBlank() == true) {
-            return false
-        }
+        return _signUpRequest.value?.poids != null
+    }
+
+    private fun isBirthDateValid(): Boolean {
         return try {
-            poids.value?.toDouble()
+            LocalDate.parse(birthDate.value)
             true
-        } catch (e: NumberFormatException) {
+        } catch (e: Exception) {
             false
         }
     }
 
-    fun validData(): Boolean? {
-        _dataValid.value = isPasswordIdentical() && isLastNameValid() && isFirstNameValid() && isEmailValid() && isPasswordValid() && isTailleValid() && isPoidsValid() && isUsernameValid()
-        return _dataValid.value
+    private fun validData(): Boolean {
+        return isPasswordIdentical() && isLastNameValid() && isFirstNameValid() && isEmailValid() && isPasswordValid() && isTailleValid() && isPoidsValid() && isUsernameValid()
     }
 
-    fun getSignupRequest(): SignUpRequest {
-        return SignUpRequest(
-            lastname.value ?: "",
-            firstname.value ?: "",
-            username.value ?: "",
-            password.value,
-            poids.value?.toDouble() ?: 0.0,
-            taille.value?.toDouble() ?: 0.0,
-            birthdate.value?.let { LocalDate.parse(it) } ?: LocalDate.now()
-        )
+    fun onValid() {
+        if (!validData()) {
+            Log.d("SignUpViewModel", "Invalid data")
+        }
+        uiScope.launch {
+            val obj = signUpRequest.value!!
+            obj.birthdate = LocalDate.parse(birthDate.value)
+            val request = authRepository.register(obj.toSerializable())
+            Log.d("SignUpViewModel", "Request: $request")
+            if (!request.isSuccessful) {
+                Log.e("SignUpActivity", "onCreate error: ${request.errorBody()}")
+                return@launch
+            }
+            _navigateToConnexion.postValue(true)
+            Log.d("SignUpActivity", "onCreate: ${request.body()}")
+        }
+
     }
 
 

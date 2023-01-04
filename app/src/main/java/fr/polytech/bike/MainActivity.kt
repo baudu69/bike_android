@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment
 import fr.polytech.bike.data.LoginRepository
 import fr.polytech.bike.data.bluetooth.ServiceBluetooth
 import fr.polytech.bike.data.local.LocalDatabase
+import fr.polytech.bike.data.model.JwtResponse
 import fr.polytech.bike.databinding.ActivityMainBinding
 import fr.polytech.bike.repository.ApiClient
 import fr.polytech.bike.ui.login.LoginActivity
@@ -80,9 +81,11 @@ class MainActivity : AppCompatActivity() {
         val continu: MutableLiveData<Boolean> = MutableLiveData(false)
         val context = this
         scope.launch {
-            if (localDatabase.JWTDao.getLast() == null) {
+            val jwt: JwtResponse? = localDatabase.JWTDao.getLast()
+            if (jwt == null) {
                 launcherLogin.launch(Intent(context, LoginActivity::class.java))
             } else {
+                LoginRepository.jwt = jwt
                 val response = userRepository.get()
                 if (response.isSuccessful) {
                     LoginRepository.jwt = localDatabase.JWTDao.getLast()

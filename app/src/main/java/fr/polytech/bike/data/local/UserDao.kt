@@ -16,6 +16,6 @@ interface UserDao {
     @Query("DELETE FROM utilisateur")
     fun delete()
 
-    @Query("SELECT * FROM utilisateur ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM utilisateur ORDER BY login DESC LIMIT 1")
     fun getLast(): Utilisateur?
 }

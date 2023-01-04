@@ -20,7 +20,6 @@ class ProfilFragment : Fragment() {
     private lateinit var viewModel: ProfilViewModel
     private lateinit var viewModelFactory: ProfilViewModelFactory
     private lateinit var binding: FragmentProfilBinding
-    private var userRepository = ApiClient.userRepository
 
 
     override fun onCreateView(
@@ -31,34 +30,16 @@ class ProfilFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)[ProfilViewModel::class.java]
         binding = FragmentProfilBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
-        eventValidate()
+        this.eventMessage()
         return binding.root
     }
 
-    private fun eventValidate() {
-        binding.btnProfilValid.setOnClickListener {
-            runBlocking {
-                launch {
-                    Log.d("ProfilFragment", "eventValidate: ${viewModel.getUserModel()}")
-                    val response: Response<Void> = userRepository.update(viewModel.getUserModel())
-                    if (response.isSuccessful) {
-                        Log.d("ProfilFragment", "eventValidate: ${response.body()}")
-                        majUserStocked()
-                        Toast.makeText(context, "Profil mis à jour", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Log.d("ProfilFragment", "error eventValidate: ${response.errorBody()}")
-                    }
-                }
-            }
+    private fun eventMessage() {
+        this.viewModel.message.observe(viewLifecycleOwner) {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun majUserStocked() {
-        LoginRepository.user?.prenomUtil = viewModel.firstname.value ?: ""
-        LoginRepository.user?.nomUtil = viewModel.lastname.value ?: ""
-        LoginRepository.user?.poids = viewModel.poids.value?.toDouble() ?: 0.0
-        LoginRepository.user?.taille = viewModel.taille.value?.toDouble() ?: 0.0
-        LoginRepository.user?.dateNaissance = viewModel.birthdate.value?.let { LocalDate.parse(it) } ?: LocalDate.now()
-    }
+
 
 }

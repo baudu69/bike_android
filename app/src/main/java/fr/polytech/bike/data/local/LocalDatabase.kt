@@ -9,7 +9,7 @@ import fr.polytech.bike.data.model.Converters
 import fr.polytech.bike.data.model.JwtResponse
 import fr.polytech.bike.data.model.Utilisateur
 
-@Database(entities = [JwtResponse::class, Utilisateur::class], version = 1, exportSchema = false)
+@Database(entities = [JwtResponse::class, Utilisateur::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class LocalDatabase: RoomDatabase() {
     abstract val JWTDao: JWTDao
