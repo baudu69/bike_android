@@ -18,4 +18,14 @@
     <string name="gatt_service_running_notification">\"Managing BLE GATT service\"</string>
     <string name="pair_the_ble_gatt_server_via_settings">Pair the ble-gatt-server via settings</string>
     <string name="mapSortieAddAlt">Carte de la sortie</string>
+    <string name="signup_inscription">Inscription</string>
+    <string name="signup_nom">Nom</string>
+    <string name="signum_prenom">Prenom</string>
+    <string name="signup_taille">Taille (cm)</string>
+    <string name="signup_poids">Poids (kg)</string>
+    <string name="signup_birthdate">Date de naissance</string>
+    <string name="signup_login">Nom d\'utilisateur</string>
+    <string name="signup_password">Mot de passe</string>
+    <string name="signup_password_confirm">Confirmation mot de passe</string>
+    <string name="signup_valid">Valider</string>
 </resources>

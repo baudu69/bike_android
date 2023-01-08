@@ -25,6 +25,11 @@ class ProfilViewModel(user: Utilisateur) : ViewModel() {
     val birthdate: MutableLiveData<String> = MutableLiveData(user.dateNaissance.toString())
 
 
+    private val errorBirthDate: MutableLiveData<String> = MutableLiveData("")
+    val errorBirthDateLiveData: LiveData<String>
+        get() = errorBirthDate
+
+
     private val job = Job()
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO + job)
 
@@ -57,6 +62,7 @@ class ProfilViewModel(user: Utilisateur) : ViewModel() {
                 _userModel.value!!.dateNaissance = date
             } catch (e: Exception) {
                 Log.d("ProfilViewModel", "Invalid date")
+                errorBirthDate.postValue("Date invalide")
             }
         }
     }

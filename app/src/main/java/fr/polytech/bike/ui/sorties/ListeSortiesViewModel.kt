@@ -7,8 +7,7 @@ import androidx.lifecycle.ViewModel
 import fr.polytech.bike.repository.ApiClient
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.repository.SortieRepository
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import retrofit2.Response
 
 class ListeSortiesViewModel : ViewModel() {
@@ -18,20 +17,20 @@ class ListeSortiesViewModel : ViewModel() {
     val sorties: LiveData<List<Sortie>>
         get() = _sorties
 
+    private val uiScope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
+
     init {
         _sorties.value = ArrayList()
         loadSorties()
     }
 
     private fun loadSorties() {
-        runBlocking {
-            launch {
-                val response: Response<List<Sortie>> = sortieRepository.getSorties()
-                if (!response.isSuccessful) {
-                    Log.e("ListeSortiesViewModel", "loadSorties: ${response.errorBody()}")
-                    return@launch
-                }
-                _sorties.value = response.body()
+        uiScope.launch {
+            val response: Response<List<Sortie>> = sortieRepository.getSorties()
+            if (response.isSuccessful) {
+                _sorties.postValue(response.body())
+            } else {
+                Log.e("ListeSorties", "Error while loading sorties: ${response.errorBody()}")
             }
         }
     }

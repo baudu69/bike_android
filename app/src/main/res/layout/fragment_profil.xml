@@ -73,6 +73,7 @@
                 android:ems="10"
                 android:hint="Date de naissance"
                 android:text="@={viewModel.birthdate}"
+                android:error="@{viewModel.errorBirthDateLiveData}"
                 android:inputType="date"
                 android:minHeight="48dp" />
 
