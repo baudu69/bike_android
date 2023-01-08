@@ -1,103 +1,93 @@
 package fr.polytech.bike.ui.sorties.addsortie
 
 import android.util.Log
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import fr.polytech.bike.data.SortieRepository
 import fr.polytech.bike.data.bluetooth.ServiceBluetooth
 import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.repository.ApiClient
-import fr.polytech.bike.repository.SortieApiRepository
 import kotlinx.coroutines.*
 import java.time.LocalDate
-import java.time.LocalTime
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class AddSortieViewModel : ViewModel() {
-    private val sortieApiRepository: SortieApiRepository = ApiClient.sortieApiRepository
+class AddSortieViewModel(private val sortieRepository: SortieRepository) : ViewModel() {
+
+    private val uiScope = CoroutineScope(Dispatchers.IO + Job())
 
     private val _finish = MutableLiveData<Boolean>()
     val finish: LiveData<Boolean>
         get() = _finish
 
-    private val job = Job()
-    private val uiScope = CoroutineScope(Dispatchers.IO + job)
 
     val lieuSortie: MutableLiveData<String> = MutableLiveData()
-    val dateSortie: MutableLiveData<LocalDate> = MutableLiveData()
-    val heureDepart: MutableLiveData<LocalTime> = MutableLiveData()
-    val heureArrivee: MutableLiveData<LocalTime> = MutableLiveData()
 
-    private var etapes: MutableList<Etape> = ArrayList()
+    private var _etapes: MutableList<Etape> = ArrayList()
+    val etapes: List<Etape>
+        get() = _etapes
 
     val longueurSortie: LiveData<Double>
         get() = _longueurSortie
     private val _longueurSortie: MutableLiveData<Double> = MutableLiveData()
 
+    private var _etatTransfert: MutableLiveData<EtatTransfert?> = MutableLiveData()
+    val etatTransfert: LiveData<EtatTransfert?>
+        get() = _etatTransfert
 
-    val etape: LiveData<Etape>
-        get() = _etape
-    private val _etape: MutableLiveData<Etape> = MutableLiveData()
-
-
-    val nbEtapes: LiveData<Int>
-        get() = _nbEtapes
-    private val _nbEtapes: MutableLiveData<Int> = MutableLiveData()
-
-    val etapeActuelle: LiveData<Int>
-        get() = _etapeActuelle
-    private val _etapeActuelle: MutableLiveData<Int> = MutableLiveData()
-
-    private var lastEtape: Etape? = null
+    private var etapesTotal = 0
+    private var etapeActuelle = 0
 
     init {
-        _etapeActuelle.postValue(0)
-        _longueurSortie.postValue(0.0)
-
-        runBlocking {
-            launch {
-                ServiceBluetooth.message.observeForever { message ->
-                    try {
-                        _nbEtapes.postValue(message.toInt())
-                    } catch (e: NumberFormatException) {
-                        val etape = ApiClient.gson.fromJson(message, Etape::class.java)
-                        etapes.add(etape)
-                        _etape.postValue(etape)
-                        _etapeActuelle.postValue(etapeActuelle.value?.plus(1))
-                    }
-                }
+        reset()
+        ServiceBluetooth.message.observeForever { message ->
+            try {
+                etapesTotal = message.toInt()
+                _etatTransfert.postValue(EtatTransfert(0, etapesTotal))
+            } catch (e: NumberFormatException) {
+                etapeActuelle++
+                val etape = ApiClient.gson.fromJson(message, Etape::class.java)
+                _etapes.add(etape)
+                calculateDistance(_etapes)
+                _etatTransfert.postValue(EtatTransfert(etapeActuelle, etapesTotal))
             }
         }
-        this.calculateDistance()
     }
 
     fun reset() {
-        _etapeActuelle.postValue(0)
-        _nbEtapes.postValue(0)
+        _etatTransfert.postValue(null)
         _longueurSortie.postValue(0.0)
         _finish.postValue(false)
-        this.etapes = ArrayList()
-        this.lastEtape = null
+        this._etapes = ArrayList()
+        this.etapeActuelle = 0
+        this.etapesTotal = 0
     }
 
-    private fun calculateDistance() {
-        this.etape.observeForever {
-            if (this.lastEtape != null) {
-                val distance = calculateDistanceBetweenTwoPointOnAMap(
-                    this.lastEtape!!.latitude,
-                    this.lastEtape!!.longitude,
-                    it.latitude,
-                    it.longitude
-                )
-                _longueurSortie.postValue(longueurSortie.value?.plus(distance))
-            }
-            this.lastEtape = it
+    private fun calculateDistance(etapes: List<Etape>) {
+        if (etapes.size < 2) {
+            _longueurSortie.postValue(0.0)
+            return
         }
+        var distance = 0.0
+        for (i in 0 until etapes.size - 1) {
+            val etape1 = etapes[i]
+            val etape2 = etapes[i + 1]
+            distance += calculateDistanceBetweenTwoPointOnAMap(
+                etape1.latitude,
+                etape1.longitude,
+                etape2.latitude,
+                etape2.longitude
+            )
+        }
+        _longueurSortie.postValue(distance)
     }
+
 
     private fun calculateDistanceBetweenTwoPointOnAMap(
         latitude1: Double,
@@ -121,24 +111,28 @@ class AddSortieViewModel : ViewModel() {
     }
 
     fun validSortie() {
+        if (lieuSortie.value == null || lieuSortie.value!!.isEmpty()) {
+            Log.d("AddSortieViewModel", "Lieu de la sortie non renseigné")
+            return
+        }
         val sortie = Sortie(
             LocalDate.now(),
-            LocalTime.now(),
-            LocalTime.now().plusMinutes(10),
+            _etapes[0].heureEtape,
+            _etapes[_etapes.size - 1].heureEtape,
             lieuSortie.value!!,
             longueurSortie.value!!,
-            etapes
+            _etapes
         )
         uiScope.launch {
-            val res = sortieApiRepository.addSortie(sortie)
-            if (res.isSuccessful) {
+            try {
+                sortieRepository.insert(sortie)
                 Log.d("AddSortieViewModel", "Sortie added")
                 _finish.postValue(true)
-            } else {
-                Log.d("AddSortieViewModel", "Sortie not added")
+            } catch (e: Exception) {
+                Log.e("AddSortieViewModel", "Error while adding sortie", e)
             }
         }
     }
-
-
 }
+
+data class EtatTransfert(val etapeActuelle: Int, val nbEtapes: Int)

@@ -50,7 +50,16 @@ class SortieRepository(context: Context) {
         }
     }
 
-    fun clear() {
-        sortieDao.deleteAll()
+    suspend fun deleteSortie(idSortie: Int) {
+        this.sortieApiRepository.deleteSortie(idSortie)
+        this.sortieDao.delete(idSortie)
+    }
+
+    suspend fun insert(sortie: Sortie) {
+        val res = this.sortieApiRepository.addSortie(sortie)
+        if (!res.isSuccessful) {
+            throw Exception("Erreur lors de l'ajout de la sortie")
+        }
+        this.load()
     }
 }

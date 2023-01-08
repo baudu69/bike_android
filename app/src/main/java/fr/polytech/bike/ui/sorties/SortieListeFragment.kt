@@ -1,5 +1,6 @@
 package fr.polytech.bike.ui.sorties
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -57,6 +58,16 @@ class SortieListeFragment : Fragment() {
             this.findNavController().navigate(
                 SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(it.id!!)
             )
+        }
+        viewModel.confirmDelete.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Supprimer la sortie")
+                .setMessage("Voulez-vous vraiment supprimer cette sortie ?")
+                .setPositiveButton("Oui") { _, _ ->
+                    viewModel.deleteSortie(it)
+                }
+                .setNegativeButton("Non") { _, _ -> }
+                .show()
         }
     }
 

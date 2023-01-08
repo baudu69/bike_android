@@ -11,7 +11,7 @@ import fr.polytech.bike.repository.SortieApiRepository
 import kotlinx.coroutines.*
 import retrofit2.Response
 
-class ListeSortiesViewModel(private val sortieRepository: SortieRepository, private val adapter: SortieViewAdapter) : ViewModel() {
+class ListeSortiesViewModel(private val sortieRepository: SortieRepository, adapter: SortieViewAdapter) : ViewModel() {
 
     private val uiScope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
@@ -23,10 +23,17 @@ class ListeSortiesViewModel(private val sortieRepository: SortieRepository, priv
     val navigateToDetail: LiveData<Sortie>
         get() = _navigateToDetail
 
+    private val _confirmDelete = MutableLiveData<Sortie>()
+    val confirmDelete: LiveData<Sortie>
+        get() = _confirmDelete
+
     init {
         loadSorties()
         adapter.click.observeForever { sortie ->
             _navigateToDetail.postValue(sortie)
+        }
+        adapter.longClick.observeForever { sortie ->
+            _confirmDelete.postValue(sortie)
         }
     }
 
@@ -35,6 +42,17 @@ class ListeSortiesViewModel(private val sortieRepository: SortieRepository, priv
             val sorties = sortieRepository.getSorties()
             _sorties.postValue(sorties)
         }
+    }
+
+    fun deleteSortie(it: Sortie?) {
+        Log.d("SortieListeFragment", "deleteSortie: $it")
+        uiScope.launch {
+            it?.let {
+                it.id?.let { it1 -> sortieRepository.deleteSortie(it1) }
+            }
+            _sorties.postValue(sortieRepository.getSorties())
+        }
+
     }
 
 

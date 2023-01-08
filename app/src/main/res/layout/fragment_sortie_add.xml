@@ -7,6 +7,7 @@
         <variable
             name="viewModel"
             type="fr.polytech.bike.ui.sorties.addsortie.AddSortieViewModel" />
+
     </data>
 
     <RelativeLayout

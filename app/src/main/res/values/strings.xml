@@ -31,4 +31,9 @@
     <string name="item_sortie_date">Date :</string>
     <string name="item_sortie_lieu">Lieu :</string>
     <string name="item_sortie_distance">Distance :</string>
+    <string name="profil_lastname_empty">Le nom ne peut pas être vide</string>
+    <string name="profil_firstname_empty">Le prénom ne peut pas être vide</string>
+    <string name="profil_height_empty">La taille ne peut pas être vide</string>
+    <string name="profil_weight_empty">Le poids ne peut pas être vide</string>
+    <string name="profil_birthdate_empty">La date de naissance ne peut pas être vide</string>
 </resources>

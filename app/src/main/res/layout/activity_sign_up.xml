@@ -37,6 +37,8 @@
             android:hint="@string/signup_nom"
             android:inputType="textPersonName"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.lastnameError}"
+            android:afterTextChanged="@{() -> viewModel.checkLastName()}"
             android:text="@={viewModel.signUpRequest.lastname}" />
 
         <EditText
@@ -48,6 +50,8 @@
             android:hint="@string/signum_prenom"
             android:inputType="textPersonName"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.firstnameError}"
+            android:afterTextChanged="@{() -> viewModel.checkFirstName()}"
             android:text="@={viewModel.signUpRequest.firstname}" />
 
         <EditText
@@ -59,6 +63,8 @@
             android:hint="@string/signup_taille"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.tailleError}"
+            android:afterTextChanged="@{() -> viewModel.checkTaille()}"
             android:text="@={Converter.doubleToString(viewModel.signUpRequest.taille)}" />
 
         <EditText
@@ -70,6 +76,8 @@
             android:hint="@string/signup_poids"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.poidsError}"
+            android:afterTextChanged="@{() -> viewModel.checkPoids()}"
             android:text="@={Converter.doubleToString(viewModel.signUpRequest.poids)}" />
 
         <EditText
@@ -81,6 +89,8 @@
             android:hint="@string/signup_birthdate"
             android:inputType="date"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.birthdateError}"
+            android:afterTextChanged="@{() -> viewModel.checkBirthDate()}"
             android:text="@={viewModel.birthDate}" />
 
         <EditText
@@ -92,6 +102,8 @@
             android:hint="@string/signup_login"
             android:inputType="text"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.usernameError}"
+            android:afterTextChanged="@{() -> viewModel.checkLogin()}"
             android:text="@={viewModel.signUpRequest.username}" />
 
         <EditText
@@ -103,6 +115,8 @@
             android:hint="@string/signup_password"
             android:inputType="textPassword"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.passwordError}"
+            android:afterTextChanged="@{() -> viewModel.checkPassword()}"
             android:text="@={viewModel.signUpRequest.password}" />
 
         <EditText
@@ -114,6 +128,8 @@
             android:hint="@string/signup_password_confirm"
             android:inputType="textPassword"
             android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.passwordConfirmError}"
+            android:afterTextChanged="@{() -> viewModel.checkValidPassword()}"
             android:text="@={viewModel.confirmPassword}" />
 
         <com.google.android.material.button.MaterialButton

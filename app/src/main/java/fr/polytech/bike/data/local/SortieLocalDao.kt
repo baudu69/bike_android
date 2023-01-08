@@ -21,6 +21,9 @@ interface SortieLocalDao {
     @Query("SELECT * FROM sortie WHERE id = :id")
     fun getSortie(id: Int): Sortie?
 
+    @Query("DELETE FROM sortie WHERE id = :id")
+    fun delete(id: Int)
+
     @Update
     fun update(sortie: Sortie)
 }

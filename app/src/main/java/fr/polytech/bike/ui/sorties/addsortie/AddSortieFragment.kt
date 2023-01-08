@@ -24,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import fr.polytech.bike.data.SortieRepository
 import fr.polytech.bike.data.bluetooth.ServiceBluetooth
 import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.databinding.FragmentSortieAddBinding
@@ -78,7 +79,7 @@ class AddSortieFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        this.viewModelFactory = AddSortieViewModelFactory()
+        this.viewModelFactory = AddSortieViewModelFactory(SortieRepository(requireContext()))
         this.viewModel = ViewModelProvider(this, viewModelFactory)[AddSortieViewModel::class.java]
         this.binding = FragmentSortieAddBinding.inflate(inflater, container, false)
         this.binding.lifecycleOwner = this
@@ -86,7 +87,6 @@ class AddSortieFragment : Fragment() {
         this.bluetoothPermissions()
         this.binding.mvSortieAdd.onCreate(savedInstanceState)
         this.progressBarControl()
-        openMap()
         checkForEnd()
         return this.binding.root
     }
@@ -115,27 +115,21 @@ class AddSortieFragment : Fragment() {
     }
 
     private fun progressBarControl() {
-        //Indeterminate tant que le bluetooth n'est pas connecté
-        var connected = false
-        this.binding.progressBar.isIndeterminate = true
-        ServiceBluetooth.connected.observe(viewLifecycleOwner) {
-            if (it and !connected) {
-                connected = true
-                this.binding.progressBar.isIndeterminate = false
+        this.viewModel.etatTransfert.observe(viewLifecycleOwner) {
+            Log.d("Receive state : ", it.toString())
+            if (it == null) {
+                this.binding.progressBar.isIndeterminate = true
                 this.binding.progressBar.progress = 0
+                return@observe
             }
-        }
-
-        this.viewModel.nbEtapes.observe(viewLifecycleOwner) {
-            this.binding.progressBar.max = it
-        }
-        this.viewModel.etapeActuelle.observe(viewLifecycleOwner) {
-            this.binding.progressBar.progress = it
-            if (it == this.binding.progressBar.max && it != 0) {
-                Log.i("AddSortieFragment", "Chargement terminé")
-                this.binding.btnValidNewSortie.isClickable = true
-                this.binding.progressBar.visibility = View.GONE
+            this.binding.progressBar.isIndeterminate = false
+            actualizeMap()
+            if (it.etapeActuelle == it.nbEtapes) {
+                this.binding.progressBar.visibility = ProgressBar.GONE
+                return@observe
             }
+            this.binding.progressBar.max = it.nbEtapes
+            this.binding.progressBar.progress = it.etapeActuelle
         }
     }
 
@@ -145,31 +139,36 @@ class AddSortieFragment : Fragment() {
         this.viewModel.reset()
     }
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        var att = 0;
-        var etapePrecedente: Etape? = null
-        viewModel.etape.observe(viewLifecycleOwner) { etape ->
-            val polylineOptions = PolylineOptions()
-            googleMap.addMarker(
-                MarkerOptions().position(LatLng(etape.latitude, etape.longitude))
-                    .title(etape.description())
-            )
-            polylineOptions.add(LatLng(etape.latitude, etape.longitude))
-            if (etapePrecedente != null) {
-                polylineOptions.add(LatLng(etapePrecedente!!.latitude, etapePrecedente!!.longitude))
-            }
-            etapePrecedente = etape
-            googleMap.addPolyline(polylineOptions)
-            if (att == 0) {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(etape.latitude, etape.longitude), 10f))
-            }
-            att++
-        }
+    override fun onResume() {
+        super.onResume()
+        requireActivity().startService(Intent(activity, ServiceBluetooth::class.java))
+        this.viewModel.reset()
     }
 
-    private fun openMap() {
-        MapsInitializer.initialize(requireActivity())
-        this.binding.mvSortieAdd.getMapAsync(callback)
+
+    private fun actualizeMap() {
+        this.binding.mvSortieAdd.getMapAsync {
+            if (viewModel.etapes.isEmpty()) {
+                return@getMapAsync
+            }
+            it.clear()
+            for (etape in this.viewModel.etapes) {
+                it.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(etape.latitude, etape.longitude))
+                        .title(etape.description())
+                )
+            }
+            if (this.viewModel.etapes.size > 1) {
+                val polylineOptions = PolylineOptions()
+                for (etape in this.viewModel.etapes) {
+                    polylineOptions.add(LatLng(etape.latitude, etape.longitude))
+                }
+                it.addPolyline(polylineOptions)
+            }
+
+            it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.etapes[0].latitude, viewModel.etapes[0].longitude), 10f))
+        }
         this.binding.mvSortieAdd.onResume()
     }
 

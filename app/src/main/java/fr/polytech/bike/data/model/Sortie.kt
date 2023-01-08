@@ -19,7 +19,7 @@ data class Sortie(
     @ColumnInfo(name = "distanceParcourue") val distanceParcourue: Double,
     @ColumnInfo(name = "etapes") var etapes: List<Etape>
 ): java.io.Serializable {
-    @ColumnInfo(name = "fav") var fav: Boolean = false
+    @ColumnInfo(name = "fav") @Transient var fav: Boolean = false
     override fun toString(): String {
         return "Sortie(id=$id, numUtil=$numUtil, dateSortie=$dateSortie, heureDepart=$heureDepart, heureArrivee=$heureArrivee, lieuDepart='$lieuDepart', distanceParcourue=$distanceParcourue)"
     }

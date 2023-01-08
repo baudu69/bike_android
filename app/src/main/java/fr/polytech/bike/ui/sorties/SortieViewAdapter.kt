@@ -18,10 +18,21 @@ class SortieViewAdapter(private var sorties: List<Sortie>, private val context: 
     val click: LiveData<Sortie>
         get() = _click
 
+    private val _longClick: MutableLiveData<Sortie> = MutableLiveData()
+    val longClick: LiveData<Sortie>
+        get() = _longClick
+
     private var onClickListener: View.OnClickListener = View.OnClickListener {
         val itemPosition: Int = recyclerView.getChildLayoutPosition(it)
         val item: Sortie = sorties[itemPosition]
         _click.postValue(item)
+    }
+
+    private val onLongOnClickListener: View.OnLongClickListener = View.OnLongClickListener {
+        val itemPosition: Int = recyclerView.getChildLayoutPosition(it)
+        val item: Sortie = sorties[itemPosition]
+        _longClick.postValue(item)
+        true
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SortieViewHolder {
@@ -29,6 +40,7 @@ class SortieViewAdapter(private var sorties: List<Sortie>, private val context: 
             R.layout.item_sortie,
             parent, false)
         itemView.setOnClickListener(onClickListener)
+        itemView.setOnLongClickListener(onLongOnClickListener)
 
         return SortieViewHolder(itemView)
     }

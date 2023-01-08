@@ -42,6 +42,8 @@
                 android:layout_marginBottom="20dip"
                 android:ems="10"
                 android:hint="Nom"
+                android:error="@{viewModel.profilFormState.lastnameError}"
+                android:afterTextChanged="@{() -> viewModel.validateLastname()}"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
                 android:text="@={viewModel.userModel.nomUtil}" />
@@ -51,6 +53,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
+                android:error="@{viewModel.profilFormState.firstnameError}"
+                android:afterTextChanged="@{() -> viewModel.validateFirstname()}"
                 android:ems="10"
                 android:hint="Prenom"
                 android:inputType="textPersonName"
@@ -64,6 +68,8 @@
                 android:layout_marginBottom="20dip"
                 android:ems="10"
                 android:hint="Mot de passe"
+                android:error="@{viewModel.profilFormState.passwordError}"
+                android:afterTextChanged="@{() -> viewModel.validatePassword()}"
                 android:inputType="textPassword"
                 android:minHeight="48dp"
                 android:text="@={viewModel.password}" />
@@ -74,7 +80,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
                 android:ems="10"
-                android:error="@{viewModel.errorBirthDateLiveData}"
+                android:error="@{viewModel.profilFormState.birthdateError}"
+                android:afterTextChanged="@{() -> viewModel.validateBirthdate()}"
                 android:hint="Date de naissance"
                 android:inputType="date"
                 android:minHeight="48dp"
@@ -85,9 +92,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
+                android:afterTextChanged="@{() -> viewModel.validateTaille()}"
                 android:ems="10"
+                android:error="@{viewModel.profilFormState.tailleError}"
                 android:hint="Taille (cm)"
-                android:inputType="numberDecimal"
+                android:inputType="number"
                 android:minHeight="48dp"
                 android:text="@={Converter.doubleToString(viewModel.userModel.taille)}" />
 
@@ -100,6 +109,8 @@
                 android:hint="Poids (kg)"
                 android:inputType="numberDecimal"
                 android:minHeight="48dp"
+                android:error="@{viewModel.profilFormState.poidsError}"
+                android:afterTextChanged="@{() -> viewModel.validatePoids()}"
                 android:text="@={Converter.doubleToString(viewModel.userModel.poids)}" />
 
             <Button
