@@ -11,21 +11,29 @@ import fr.polytech.bike.repository.SortieApiRepository
 import kotlinx.coroutines.*
 import retrofit2.Response
 
-class ListeSortiesViewModel(private val sortieRepository: SortieRepository) : ViewModel() {
+class ListeSortiesViewModel(private val sortieRepository: SortieRepository, private val adapter: SortieViewAdapter) : ViewModel() {
+
+    private val uiScope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
+
     private val _sorties = MutableLiveData<List<Sortie>>()
     val sorties: LiveData<List<Sortie>>
         get() = _sorties
 
-    private val uiScope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
+    private val _navigateToDetail = MutableLiveData<Sortie>()
+    val navigateToDetail: LiveData<Sortie>
+        get() = _navigateToDetail
 
     init {
-        _sorties.value = ArrayList()
         loadSorties()
+        adapter.click.observeForever { sortie ->
+            _navigateToDetail.postValue(sortie)
+        }
     }
 
     private fun loadSorties() {
         uiScope.launch {
-            _sorties.postValue(sortieRepository.getSorties())
+            val sorties = sortieRepository.getSorties()
+            _sorties.postValue(sorties)
         }
     }
 

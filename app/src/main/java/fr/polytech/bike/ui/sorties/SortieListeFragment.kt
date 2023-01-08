@@ -8,14 +8,21 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import fr.polytech.bike.R
 import fr.polytech.bike.data.SortieRepository
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.databinding.FragmentSortieListeBinding
 import fr.polytech.bike.repository.ApiClient
 import fr.polytech.bike.repository.SortieApiRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class SortieListeFragment : Fragment() {
 
@@ -23,41 +30,33 @@ class SortieListeFragment : Fragment() {
     private lateinit var viewModel: ListeSortiesViewModel
     private lateinit var binding: FragmentSortieListeBinding
 
+    private lateinit var adapter: SortieViewAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModelFactory = ListeSortiesViewModelFactory(SortieRepository(requireContext()))
-        viewModel = ViewModelProvider(this, viewModelFactory)[ListeSortiesViewModel::class.java]
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sortie_liste, container, false)
+        adapter = SortieViewAdapter(emptyList(), requireContext(), binding.rvSorties)
+        viewModelFactory = ListeSortiesViewModelFactory(SortieRepository(requireContext()), adapter)
+        viewModel = ViewModelProvider(this, viewModelFactory)[ListeSortiesViewModel::class.java]
         binding.viewModel = viewModel
-        loadListe()
-        eventListClick()
+        binding.rvSorties.adapter = adapter
+        binding.rvSorties.layoutManager = LinearLayoutManager(requireContext())
         eventBtnAddClick()
+        adapter()
         return binding.root
     }
 
-    private fun loadListe() {
-        viewModel.sorties.observe(viewLifecycleOwner) { sorties ->
-            val adapter =
-                ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, sorties.map { it.titre() })
-            binding.lvSorties.adapter = adapter
+    private fun adapter() {
+        binding.rvSorties.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        viewModel.sorties.observe(viewLifecycleOwner) {
+            adapter.setSorties(it)
         }
-    }
-
-    private fun eventListClick() {
-        binding.lvSorties.setOnItemClickListener { _, _, position, _ ->
-            val sortie: Sortie? = viewModel.sorties.value?.get(position)
-            if (sortie == null) {
-                Log.e("ListeSorties", "Click on item $position but no sortie found")
-                return@setOnItemClickListener
-            }
+        viewModel.navigateToDetail.observe(viewLifecycleOwner) {
             this.findNavController().navigate(
-                SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(
-                    sortie.id!!
-                ),
+                SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(it.id!!)
             )
-
         }
     }
 

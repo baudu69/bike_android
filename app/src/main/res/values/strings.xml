@@ -28,4 +28,7 @@
     <string name="signup_password">Mot de passe</string>
     <string name="signup_password_confirm">Confirmation mot de passe</string>
     <string name="signup_valid">Valider</string>
+    <string name="item_sortie_date">Date :</string>
+    <string name="item_sortie_lieu">Lieu :</string>
+    <string name="item_sortie_distance">Distance :</string>
 </resources>
