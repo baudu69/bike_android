@@ -1,7 +1,11 @@
 package fr.polytech.bike.data
 
-import android.util.Log
+import fr.polytech.bike.data.local.JWTDao
+import fr.polytech.bike.data.local.LocalDatabase
 import fr.polytech.bike.data.model.JwtResponse
+import fr.polytech.bike.data.model.Utilisateur
+import fr.polytech.bike.repository.ApiClient
+import fr.polytech.bike.ui.login.jwtReponseBody
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -12,25 +16,23 @@ class LoginRepository(val dataSource: LoginDataSource) {
 
 
     companion object Factory {
-        var user: JwtResponse? = null
+        var jwt: JwtResponse? = null
+        var user: Utilisateur? = null
+
     }
 
-    // in-memory cache of the loggedInUser object
-//    var user: JwtResponse2? = null
-//        private set
-
     val isLoggedIn: Boolean
-        get() = user != null
+        get() = jwt != null
 
 
     fun logout() {
-        user = null
+        jwt = null
         dataSource.logout()
     }
 
     suspend fun login(username: String, password: String): Result<JwtResponse> {
         // handle login
-        val result = dataSource.login(username, password)
+        val result: Result<JwtResponse> = dataSource.login(username, password)
         if (result is Result.Success) {
             setLoggedInUser(result.data)
         }
@@ -39,6 +41,11 @@ class LoginRepository(val dataSource: LoginDataSource) {
     }
 
     private fun setLoggedInUser(jwtResponse: JwtResponse) {
-        user = jwtResponse
+        jwt = jwtResponse
+        val bodyBase64: String = jwt!!.jwt.split(".")[1]
+        val body: String = String(android.util.Base64.decode(bodyBase64, android.util.Base64.DEFAULT))
+        val response: jwtReponseBody = ApiClient.gson.fromJson(body, jwtReponseBody::class.java)
+        val utilisateur: Utilisateur = response.user
+        user = utilisateur
     }
 }

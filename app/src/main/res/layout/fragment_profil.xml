@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.profil.ProfilFragment">
+
+    <data>
+        <import type="fr.polytech.bike.data.Converter"/>
+        <variable
+            name="viewModel"
+            type="fr.polytech.bike.ui.profil.ProfilViewModel" />
+    </data>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_profil_titre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profil"
+            android:textAlignment="center"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/ll_profil"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="40dip"
+            android:paddingVertical="50dip">
+
+            <EditText
+                android:id="@+id/et_profil_lastname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dip"
+                android:ems="10"
+                android:hint="Nom"
+                android:error="@{viewModel.profilFormState.lastnameError}"
+                android:afterTextChanged="@{() -> viewModel.validateLastname()}"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="@={viewModel.userModel.nomUtil}" />
+
+            <EditText
+                android:id="@+id/et_profil_firstname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dip"
+                android:error="@{viewModel.profilFormState.firstnameError}"
+                android:afterTextChanged="@{() -> viewModel.validateFirstname()}"
+                android:ems="10"
+                android:hint="Prenom"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="@={viewModel.userModel.prenomUtil}" />
+
+            <EditText
+                android:id="@+id/et_profil_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dip"
+                android:ems="10"
+                android:hint="Mot de passe"
+                android:error="@{viewModel.profilFormState.passwordError}"
+                android:afterTextChanged="@{() -> viewModel.validatePassword()}"
+                android:inputType="textPassword"
+                android:minHeight="48dp"
+                android:text="@={viewModel.password}" />
+
+            <EditText
+                android:id="@+id/et_profil_birthdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dip"
+                android:ems="10"
+                android:error="@{viewModel.profilFormState.birthdateError}"
+                android:afterTextChanged="@{() -> viewModel.validateBirthdate()}"
+                android:hint="Date de naissance"
+                android:inputType="date"
+                android:minHeight="48dp"
+                android:text="@={viewModel.birthdate}" />
+
+            <EditText
+                android:id="@+id/et_profil_taille"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dip"
+                android:afterTextChanged="@{() -> viewModel.validateTaille()}"
+                android:ems="10"
+                android:error="@{viewModel.profilFormState.tailleError}"
+                android:hint="Taille (cm)"
+                android:inputType="number"
+                android:minHeight="48dp"
+                android:text="@={Converter.doubleToString(viewModel.userModel.taille)}" />
+
+            <EditText
+                android:id="@+id/et_profil_poids"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dip"
+                android:ems="10"
+                android:hint="Poids (kg)"
+                android:inputType="numberDecimal"
+                android:minHeight="48dp"
+                android:error="@{viewModel.profilFormState.poidsError}"
+                android:afterTextChanged="@{() -> viewModel.validatePoids()}"
+                android:text="@={Converter.doubleToString(viewModel.userModel.poids)}" />
+
+            <Button
+                android:id="@+id/btn_profil_valid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onValidate()}"
+                android:text="Mise a jour" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
+
+
+</layout>

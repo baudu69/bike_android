@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.signup.SignUpActivity">
+    <data>
+        <import type="fr.polytech.bike.data.Converter"/>
+        <variable
+            name="viewModel"
+            type="fr.polytech.bike.ui.signup.SignUpViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="40dip"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <TextView
+            android:id="@+id/tv_signup_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dip"
+            android:text="@string/signup_inscription"
+            android:textAlignment="center"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/et_signup_lastname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signup_nom"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.lastnameError}"
+            android:afterTextChanged="@{() -> viewModel.checkLastName()}"
+            android:text="@={viewModel.signUpRequest.lastname}" />
+
+        <EditText
+            android:id="@+id/et_signup_firstname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signum_prenom"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.firstnameError}"
+            android:afterTextChanged="@{() -> viewModel.checkFirstName()}"
+            android:text="@={viewModel.signUpRequest.firstname}" />
+
+        <EditText
+            android:id="@+id/et_signup_taille"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signup_taille"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.tailleError}"
+            android:afterTextChanged="@{() -> viewModel.checkTaille()}"
+            android:text="@={Converter.doubleToString(viewModel.signUpRequest.taille)}" />
+
+        <EditText
+            android:id="@+id/et_signup_poids"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signup_poids"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.poidsError}"
+            android:afterTextChanged="@{() -> viewModel.checkPoids()}"
+            android:text="@={Converter.doubleToString(viewModel.signUpRequest.poids)}" />
+
+        <EditText
+            android:id="@+id/et_signup_birthday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signup_birthdate"
+            android:inputType="date"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.birthdateError}"
+            android:afterTextChanged="@{() -> viewModel.checkBirthDate()}"
+            android:text="@={viewModel.birthDate}" />
+
+        <EditText
+            android:id="@+id/tv_signup_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signup_login"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.usernameError}"
+            android:afterTextChanged="@{() -> viewModel.checkLogin()}"
+            android:text="@={viewModel.signUpRequest.username}" />
+
+        <EditText
+            android:id="@+id/et_signup_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signup_password"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.passwordError}"
+            android:afterTextChanged="@{() -> viewModel.checkPassword()}"
+            android:text="@={viewModel.signUpRequest.password}" />
+
+        <EditText
+            android:id="@+id/et_signup_password_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:ems="10"
+            android:hint="@string/signup_password_confirm"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:error="@{viewModel.signUpFormState.passwordConfirmError}"
+            android:afterTextChanged="@{() -> viewModel.checkValidPassword()}"
+            android:text="@={viewModel.confirmPassword}" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_signup_valid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/signup_valid"
+            android:onClick="@{() -> viewModel.onValid()}"/>
+    </LinearLayout>
+</layout>

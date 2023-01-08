@@ -1,14 +1,10 @@
 package fr.polytech.bike.ui.login
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -17,20 +13,22 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.internal.ContextUtils.getActivity
 import fr.polytech.bike.R
+import fr.polytech.bike.data.local.LocalDatabase
+import fr.polytech.bike.data.local.JWTDao
 import fr.polytech.bike.databinding.ActivityLoginBinding
-import org.json.JSONException
+import fr.polytech.bike.ui.signup.SignUpActivity
 
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var localDatabase: LocalDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        this.localDatabase = LocalDatabase.getInstance(this)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -39,8 +37,7 @@ class LoginActivity : AppCompatActivity() {
         val login = binding.login
         val loading = binding.loading
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-                .get(LoginViewModel::class.java)
+        loginViewModel = ViewModelProvider(this, LoginViewModelFactory(localDatabase))[LoginViewModel::class.java]
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
@@ -102,6 +99,16 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+        binding.btnLoginInscription?.setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    @Deprecated("Deprecated in Java", ReplaceWith("moveTaskToBack(true)"))
+    override fun onBackPressed() {
+        // Disable going back to the MainActivity
+        moveTaskToBack(true)
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {

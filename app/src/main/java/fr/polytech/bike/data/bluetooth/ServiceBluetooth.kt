@@ -1,31 +1,47 @@
 package fr.polytech.bike.data.bluetooth
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
-import android.bluetooth.BluetoothDevice
+import android.bluetooth.*
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.os.IBinder
+import android.content.IntentFilter
+import android.os.*
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.delay
+import fr.polytech.bike.BuildConfig
+import fr.polytech.bike.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.aflak.bluetooth.Bluetooth
 import me.aflak.bluetooth.interfaces.DeviceCallback
+import no.nordicsemi.android.ble.BleManager
+import java.util.*
 import kotlin.concurrent.thread
+
 
 class ServiceBluetooth : Service() {
     private val bluetooth = Bluetooth(this)
 
     companion object {
         val message: MutableLiveData<String> = MutableLiveData()
+        val connected: LiveData<Boolean>
+            get() = _connected
+        private val _connected: MutableLiveData<Boolean> = MutableLiveData()
     }
-
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
+    @SuppressLint("MissingPermission")
     override fun onCreate() {
         super.onCreate()
         thread(start = true) {
@@ -35,14 +51,14 @@ class ServiceBluetooth : Service() {
             bluetooth.connectToName("VELO_SYMPA")
             Log.d("ServiceBluetooth", "Connected to device")
             bluetooth.setDeviceCallback(object : DeviceCallback {
-                @SuppressLint("MissingPermission")
                 override fun onDeviceConnected(device: BluetoothDevice) {
                     Log.i("ServiceBluetooth", "Connected to ${device.name}")
+                    _connected.postValue(true)
                 }
 
-                @SuppressLint("MissingPermission")
                 override fun onDeviceDisconnected(device: BluetoothDevice, message: String) {
                     Log.i("ServiceBluetooth", "Disconnected from ${device.name}")
+                    _connected.postValue(false)
                 }
 
                 override fun onMessage(message: ByteArray) {
@@ -62,4 +78,8 @@ class ServiceBluetooth : Service() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        bluetooth.onStop()
+    }
 }

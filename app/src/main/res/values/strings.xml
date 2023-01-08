@@ -12,4 +12,28 @@
     <string name="btn_sortie">Sortie</string>
     <string name="btn_liste_sortie">Liste des sorties</string>
     <string name="titre_add_sortie">Ajouter une sortie</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="gatt_service_name">BLE Gatt Service</string>
+    <string name="gatt_service_description">A background BLE GATT service</string>
+    <string name="gatt_service_running_notification">\"Managing BLE GATT service\"</string>
+    <string name="pair_the_ble_gatt_server_via_settings">Pair the ble-gatt-server via settings</string>
+    <string name="mapSortieAddAlt">Carte de la sortie</string>
+    <string name="signup_inscription">Inscription</string>
+    <string name="signup_nom">Nom</string>
+    <string name="signum_prenom">Prenom</string>
+    <string name="signup_taille">Taille (cm)</string>
+    <string name="signup_poids">Poids (kg)</string>
+    <string name="signup_birthdate">Date de naissance</string>
+    <string name="signup_login">Nom d\'utilisateur</string>
+    <string name="signup_password">Mot de passe</string>
+    <string name="signup_password_confirm">Confirmation mot de passe</string>
+    <string name="signup_valid">Valider</string>
+    <string name="item_sortie_date">Date :</string>
+    <string name="item_sortie_lieu">Lieu :</string>
+    <string name="item_sortie_distance">Distance :</string>
+    <string name="profil_lastname_empty">Le nom ne peut pas être vide</string>
+    <string name="profil_firstname_empty">Le prénom ne peut pas être vide</string>
+    <string name="profil_height_empty">La taille ne peut pas être vide</string>
+    <string name="profil_weight_empty">Le poids ne peut pas être vide</string>
+    <string name="profil_birthdate_empty">La date de naissance ne peut pas être vide</string>
 </resources>

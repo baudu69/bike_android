@@ -1,6 +1,5 @@
 package fr.polytech.bike.ui.login
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,10 +8,15 @@ import fr.polytech.bike.data.LoginRepository
 import fr.polytech.bike.data.Result
 
 import fr.polytech.bike.R
+import fr.polytech.bike.data.local.LocalDatabase
+import fr.polytech.bike.data.model.Utilisateur
+import fr.polytech.bike.repository.ApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val loginRepository: LoginRepository, private val database: LocalDatabase) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -30,7 +34,16 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
                 val result = loginRepository.login(username, password)
 
                 if (result is Result.Success) {
-                    _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.username))
+                    val jwt: String = result.data.jwt
+                    val response = ApiClient.userRepository.get()
+                    val utilisateur: Utilisateur = response.body()!!
+                    _loginResult.value = LoginResult(success = LoggedInUserView(displayName = utilisateur.prenomUtil + " " + utilisateur.nomUtil))
+                    CoroutineScope(Dispatchers.IO).launch {
+                        database.userDao.delete()
+                        database.JWTDao.delete()
+                        database.JWTDao.insert(result.data)
+                        database.userDao.insert(utilisateur)
+                    }
                 } else {
                     _loginResult.value = LoginResult(error = R.string.login_failed)
                 }
@@ -62,3 +75,10 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         return password.length > 3
     }
 }
+
+data class jwtReponseBody(
+    val sub: String,
+    val iat: Long,
+    val user: Utilisateur,
+    val exp: Long
+)
