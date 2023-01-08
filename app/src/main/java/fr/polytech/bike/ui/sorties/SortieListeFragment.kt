@@ -11,12 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import fr.polytech.bike.R
+import fr.polytech.bike.data.SortieRepository
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.databinding.FragmentSortieListeBinding
 import fr.polytech.bike.repository.ApiClient
+import fr.polytech.bike.repository.SortieApiRepository
 
 class SortieListeFragment : Fragment() {
 
+    private lateinit var viewModelFactory: ListeSortiesViewModelFactory
     private lateinit var viewModel: ListeSortiesViewModel
     private lateinit var binding: FragmentSortieListeBinding
 
@@ -24,7 +27,8 @@ class SortieListeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[ListeSortiesViewModel::class.java]
+        viewModelFactory = ListeSortiesViewModelFactory(SortieRepository(requireContext()))
+        viewModel = ViewModelProvider(this, viewModelFactory)[ListeSortiesViewModel::class.java]
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sortie_liste, container, false)
         binding.viewModel = viewModel
         loadListe()
@@ -50,7 +54,7 @@ class SortieListeFragment : Fragment() {
             }
             this.findNavController().navigate(
                 SortieListeFragmentDirections.actionNavListeSortieToShowMapFragment2(
-                    ApiClient.gson.toJson(sortie.etapes)
+                    sortie.id!!
                 ),
             )
 

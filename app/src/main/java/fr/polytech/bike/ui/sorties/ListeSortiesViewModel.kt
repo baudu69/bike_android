@@ -4,15 +4,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import fr.polytech.bike.data.SortieRepository
 import fr.polytech.bike.repository.ApiClient
 import fr.polytech.bike.data.model.Sortie
-import fr.polytech.bike.repository.SortieRepository
+import fr.polytech.bike.repository.SortieApiRepository
 import kotlinx.coroutines.*
 import retrofit2.Response
 
-class ListeSortiesViewModel : ViewModel() {
-    private val sortieRepository: SortieRepository = ApiClient.sortieRepository
-
+class ListeSortiesViewModel(private val sortieRepository: SortieRepository) : ViewModel() {
     private val _sorties = MutableLiveData<List<Sortie>>()
     val sorties: LiveData<List<Sortie>>
         get() = _sorties
@@ -26,12 +25,7 @@ class ListeSortiesViewModel : ViewModel() {
 
     private fun loadSorties() {
         uiScope.launch {
-            val response: Response<List<Sortie>> = sortieRepository.getSorties()
-            if (response.isSuccessful) {
-                _sorties.postValue(response.body())
-            } else {
-                Log.e("ListeSorties", "Error while loading sorties: ${response.errorBody()}")
-            }
+            _sorties.postValue(sortieRepository.getSorties())
         }
     }
 

@@ -8,7 +8,7 @@ import fr.polytech.bike.data.bluetooth.ServiceBluetooth
 import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.repository.ApiClient
-import fr.polytech.bike.repository.SortieRepository
+import fr.polytech.bike.repository.SortieApiRepository
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -18,7 +18,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 class AddSortieViewModel : ViewModel() {
-    private val sortieRepository: SortieRepository = ApiClient.sortieRepository
+    private val sortieApiRepository: SortieApiRepository = ApiClient.sortieApiRepository
 
     private val _finish = MutableLiveData<Boolean>()
     val finish: LiveData<Boolean>
@@ -130,7 +130,7 @@ class AddSortieViewModel : ViewModel() {
             etapes
         )
         uiScope.launch {
-            val res = sortieRepository.addSortie(sortie)
+            val res = sortieApiRepository.addSortie(sortie)
             if (res.isSuccessful) {
                 Log.d("AddSortieViewModel", "Sortie added")
                 _finish.postValue(true)

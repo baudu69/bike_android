@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.gson.reflect.TypeToken
 import fr.polytech.bike.R
+import fr.polytech.bike.data.SortieRepository
 import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.databinding.FragmentSortieMapBinding
 import fr.polytech.bike.repository.ApiClient
@@ -43,8 +44,7 @@ class ShowMapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val args = ShowMapFragmentArgs.fromBundle(requireArguments())
-        val listOfMyClassObject: Type = object : TypeToken<ArrayList<Etape?>?>() {}.type
-        this.viewModelFactory = ShowMapViewModelFactory(ApiClient.gson.fromJson(args.etapes, listOfMyClassObject))
+        this.viewModelFactory = ShowMapViewModelFactory(SortieRepository(requireContext()), args.idSortie)
         this.viewModel = ViewModelProvider(this, viewModelFactory)[ShowMapViewModel::class.java]
         this.binding = FragmentSortieMapBinding.inflate(inflater, container, false)
 

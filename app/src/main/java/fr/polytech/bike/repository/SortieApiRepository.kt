@@ -6,7 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
-interface SortieRepository {
+interface SortieApiRepository {
 
     @GET("sortie")
     suspend fun getSorties(): Response<List<Sortie>>

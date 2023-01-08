@@ -7,11 +7,9 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.*
 import com.google.gson.annotations.SerializedName
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import fr.polytech.bike.BR
+import fr.polytech.bike.repository.ApiClient
+import java.time.*
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
@@ -145,5 +143,25 @@ class Converters {
     @TypeConverter
     fun fromTimestampDate(value: Long?): LocalDate? {
         return value?.let { LocalDate.ofEpochDay(value) }
+    }
+
+    @TypeConverter
+    fun fromListEtape(value: List<Etape>?): String? {
+        return value?.let { ApiClient.gson.toJson(value) }
+    }
+
+    @TypeConverter
+    fun toListEtape(value: String?): List<Etape>? {
+        return value?.let { ApiClient.gson.fromJson(value, Array<Etape>::class.java).toList() }
+    }
+
+    @TypeConverter
+    fun fromLocalTime(value: LocalTime?): Long? {
+        return value?.toNanoOfDay()
+    }
+
+    @TypeConverter
+    fun toLocalTime(value: Long?): LocalTime? {
+        return value?.let { LocalTime.ofNanoOfDay(value) }
     }
 }

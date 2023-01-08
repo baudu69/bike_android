@@ -40,8 +40,8 @@ object ApiClient {
         retrofit.create(AuthRepository::class.java)
     }
 
-    val sortieRepository: SortieRepository by lazy {
-        retrofit.create(SortieRepository::class.java)
+    val sortieApiRepository: SortieApiRepository by lazy {
+        retrofit.create(SortieApiRepository::class.java)
     }
 
     val userRepository: UserRepository by lazy {

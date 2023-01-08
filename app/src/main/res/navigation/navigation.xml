@@ -63,8 +63,8 @@
             android:id="@+id/action_showMapFragment2_to_nav_profil"
             app:destination="@id/nav_profil" />
         <argument
-            android:name="Etapes"
-            app:argType="string" />
+            android:name="idSortie"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/addSortieFragment2"
