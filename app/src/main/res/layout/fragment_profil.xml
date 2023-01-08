@@ -9,6 +9,9 @@
             name="viewModel"
             type="fr.polytech.bike.ui.profil.ProfilViewModel" />
     </data>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,9 +42,9 @@
                 android:layout_marginBottom="20dip"
                 android:ems="10"
                 android:hint="Nom"
-                android:text="@={viewModel.userModel.nomUtil}"
                 android:inputType="textPersonName"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@={viewModel.userModel.nomUtil}" />
 
             <EditText
                 android:id="@+id/et_profil_firstname"
@@ -50,20 +53,20 @@
                 android:layout_marginBottom="20dip"
                 android:ems="10"
                 android:hint="Prenom"
-                android:text="@={viewModel.userModel.prenomUtil}"
                 android:inputType="textPersonName"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@={viewModel.userModel.prenomUtil}" />
 
             <EditText
                 android:id="@+id/et_profil_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
-                android:text="@={viewModel.password}"
                 android:ems="10"
                 android:hint="Mot de passe"
                 android:inputType="textPassword"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@={viewModel.password}" />
 
             <EditText
                 android:id="@+id/et_profil_birthdate"
@@ -71,11 +74,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
                 android:ems="10"
-                android:hint="Date de naissance"
-                android:text="@={viewModel.birthdate}"
                 android:error="@{viewModel.errorBirthDateLiveData}"
+                android:hint="Date de naissance"
                 android:inputType="date"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@={viewModel.birthdate}" />
 
             <EditText
                 android:id="@+id/et_profil_taille"
@@ -83,10 +86,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
                 android:ems="10"
-                android:text="@={Converter.doubleToString(viewModel.userModel.taille)}"
                 android:hint="Taille (cm)"
                 android:inputType="numberDecimal"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@={Converter.doubleToString(viewModel.userModel.taille)}" />
 
             <EditText
                 android:id="@+id/et_profil_poids"
@@ -94,10 +97,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dip"
                 android:ems="10"
-                android:text="@={Converter.doubleToString(viewModel.userModel.poids)}"
                 android:hint="Poids (kg)"
                 android:inputType="numberDecimal"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@={Converter.doubleToString(viewModel.userModel.poids)}" />
 
             <Button
                 android:id="@+id/btn_profil_valid"
@@ -107,6 +110,7 @@
                 android:text="Mise a jour" />
         </LinearLayout>
     </LinearLayout>
+</RelativeLayout>
 
 
 </layout>
