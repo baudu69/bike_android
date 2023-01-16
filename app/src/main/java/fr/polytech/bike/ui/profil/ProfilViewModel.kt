@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import fr.polytech.bike.data.LoginRepository
+import fr.polytech.bike.data.Preferences
 import fr.polytech.bike.data.model.SignUpRequest
 import fr.polytech.bike.data.model.Utilisateur
 import fr.polytech.bike.repository.ApiClient
@@ -16,21 +17,33 @@ import okhttp3.internal.Util
 import retrofit2.Response
 import java.time.LocalDate
 
-class ProfilViewModel(user: Utilisateur) : ViewModel() {
+class ProfilViewModel(private val preferences: Preferences) : ViewModel() {
     val profilFormState = ProfilFormState()
 
-    private val _userModel: MutableLiveData<Utilisateur> = MutableLiveData(user)
+    private val _userModel: MutableLiveData<Utilisateur> = MutableLiveData()
     val userModel: LiveData<Utilisateur>
         get() = _userModel
 
     val password: MutableLiveData<String> = MutableLiveData("")
-    val birthdate: MutableLiveData<String> = MutableLiveData(user.dateNaissance.toString())
+    val birthdate: MutableLiveData<String> = MutableLiveData()
 
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
     private val _message: MutableLiveData<String> = MutableLiveData()
     val message: LiveData<String>
         get() = _message
+
+    init {
+        preferences.getString("user").let { userString ->
+            if (userString != null) {
+                val user = ApiClient.gson.fromJson(userString, Utilisateur::class.java)
+                _userModel.value = user
+                birthdate.value = user.dateNaissance.toString()
+            }
+        }
+
+
+    }
 
 
 
@@ -46,7 +59,7 @@ class ProfilViewModel(user: Utilisateur) : ViewModel() {
             val response: Response<Void> = ApiClient.userRepository.update(signUpRequest)
             if (response.isSuccessful) {
                 _message.postValue("Profil mis à jour")
-                LoginRepository.user = userModel.value
+                this@ProfilViewModel.preferences.setString("user", ApiClient.gson.toJson(userModel.value))
             } else {
                 _message.postValue("Erreur lors de la mise à jour du profil")
             }

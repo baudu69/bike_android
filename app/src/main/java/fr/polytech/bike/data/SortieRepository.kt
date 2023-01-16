@@ -1,6 +1,7 @@
 package fr.polytech.bike.data
 
 import android.content.Context
+import android.util.Log
 import fr.polytech.bike.data.local.LocalDatabase
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.repository.ApiClient
@@ -12,6 +13,7 @@ class SortieRepository(context: Context) {
     private val sortieApiRepository = ApiClient.sortieApiRepository
 
     suspend fun load() {
+        Log.d("SortieRepository", "load")
         sortieDao.deleteAll()
         val response = sortieApiRepository.getSorties()
         if (response.isSuccessful) {

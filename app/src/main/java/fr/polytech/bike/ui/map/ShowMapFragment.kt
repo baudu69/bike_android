@@ -12,13 +12,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.gson.reflect.TypeToken
 import fr.polytech.bike.R
 import fr.polytech.bike.data.SortieRepository
-import fr.polytech.bike.data.model.Etape
 import fr.polytech.bike.databinding.FragmentSortieMapBinding
-import fr.polytech.bike.repository.ApiClient
-import java.lang.reflect.Type
 
 class ShowMapFragment : Fragment() {
 

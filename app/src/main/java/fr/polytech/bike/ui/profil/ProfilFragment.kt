@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import fr.polytech.bike.data.LoginRepository
+import fr.polytech.bike.data.Preferences
 import fr.polytech.bike.databinding.FragmentProfilBinding
 import fr.polytech.bike.repository.ApiClient
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ class ProfilFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModelFactory = ProfilViewModelFactory(LoginRepository.user ?: throw Exception("User not found"))
+        viewModelFactory = ProfilViewModelFactory(Preferences(requireContext()))
         viewModel = ViewModelProvider(this, viewModelFactory)[ProfilViewModel::class.java]
         binding = FragmentProfilBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel

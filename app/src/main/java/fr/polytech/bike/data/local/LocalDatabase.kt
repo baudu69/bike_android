@@ -10,11 +10,9 @@ import fr.polytech.bike.data.model.JwtResponse
 import fr.polytech.bike.data.model.Sortie
 import fr.polytech.bike.data.model.Utilisateur
 
-@Database(entities = [JwtResponse::class, Utilisateur::class, Sortie::class], version = 3, exportSchema = false)
+@Database(entities = [Sortie::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class LocalDatabase: RoomDatabase() {
-    abstract val JWTDao: JWTDao
-    abstract val userDao: UserDao
     abstract val sortieDao: SortieLocalDao
 
     companion object {

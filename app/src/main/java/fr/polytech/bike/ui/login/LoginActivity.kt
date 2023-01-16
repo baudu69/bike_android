@@ -14,8 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import fr.polytech.bike.R
+import fr.polytech.bike.data.LoginRepository
+import fr.polytech.bike.data.Preferences
 import fr.polytech.bike.data.local.LocalDatabase
-import fr.polytech.bike.data.local.JWTDao
 import fr.polytech.bike.databinding.ActivityLoginBinding
 import fr.polytech.bike.ui.signup.SignUpActivity
 
@@ -37,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
         val login = binding.login
         val loading = binding.loading
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory(localDatabase))[LoginViewModel::class.java]
+        loginViewModel = ViewModelProvider(this, LoginViewModelFactory(LoginRepository(applicationContext), Preferences(applicationContext)))[LoginViewModel::class.java]
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer

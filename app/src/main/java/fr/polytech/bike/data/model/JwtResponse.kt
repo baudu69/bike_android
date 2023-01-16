@@ -14,28 +14,20 @@ import java.time.*
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
  */
-@Keep
-@Entity(tableName = "jwt_response")
 data class JwtResponse(
     val jwt: String
 ) {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    var id: Long = 0L
-
     override fun toString(): String {
         return "JwtResponse(jwt='$jwt')"
     }
 }
 
-@Keep
-@Entity(tableName = "utilisateur")
 data class Utilisateur(
-    @ColumnInfo(name = "nomUtil") @SerializedName("nomUtil") private var _nomUtil: String = "",
-    @ColumnInfo(name = "prenomUtil") @SerializedName("prenomUtil") private var _prenomUtil: String = "",
-    @ColumnInfo(name = "dateNaissance") @SerializedName("dateNaissance") private var _dateNaissance: LocalDate = LocalDate.now(),
-    @ColumnInfo(name = "taille") @SerializedName("taille") private var _taille: Double = 0.0,
-    @ColumnInfo(name = "poids") @SerializedName("poids") private var _poids: Double = 0.0,
+    @SerializedName("nomUtil") private var _nomUtil: String = "",
+    @SerializedName("prenomUtil") private var _prenomUtil: String = "",
+    @SerializedName("dateNaissance") private var _dateNaissance: LocalDate = LocalDate.now(),
+    @SerializedName("taille") private var _taille: Double = 0.0,
+    @SerializedName("poids") private var _poids: Double = 0.0,
     @PrimaryKey val login: String
     ): BaseObservable(), Parcelable {
 
